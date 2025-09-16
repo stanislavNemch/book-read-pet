@@ -1,0 +1,53 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    font-size: 14px;
+    color: #898f9f;
+}
+
+.input {
+    padding: 12px 16px;
+    border: 1px solid #a6abb9;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.input::placeholder {
+    color: #a6abb9;
+}
+
+.error {
+    color: #d32f2f; /* Красный цвет для ошибок */
+    font-size: 12px;
+}
+
+.submitButton {
+    padding: 14px;
+    background-color: #ff6b08; /* Оранжевый из макета */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+    background-color: #e05e07;
+}
+
+.submitButton:disabled {
+    background-color: #a6abb9;
+    cursor: not-allowed;
+}

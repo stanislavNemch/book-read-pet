@@ -1,0 +1,63 @@
+.main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* TODO: Замените 'path/to/your/background-image.jpg' 
+      на реальный путь к фоновому изображению из макета 
+    */
+    background-image: url("path/to/your/background-image.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.section {
+    width: 100%;
+    /* Используем padding из App.module.css для мобильных */
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.contentWrapper {
+    /* Это будет белая плашка для формы */
+    background-color: #ffffff;
+    padding: 40px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 480px; /* Ограничим ширину формы */
+    width: 100%;
+}
+
+/* Используем медиа-запросы из вашего App.module.css 
+  
+*/
+
+/* tablet styles */
+@media only screen and (min-width: 768px) {
+    .section {
+        padding: 0 32px;
+    }
+    .contentWrapper {
+        padding: 40px 60px;
+    }
+}
+
+/* desktop styles */
+@media only screen and (min-width: 1280px) {
+    .section {
+        padding: 0 16px;
+    }
+
+    /* На десктопе макеты (login.pdf, registration.pdf) 
+      показывают контент слева/справа от формы. 
+      Мы можем расширить AuthLayout для этого.
+      
+      Например, .main мог бы быть display: grid; grid-template-columns: 1fr 1fr;
+      А .section занимала бы одну колонку.
+      
+      Пока что оставим простую центрированную версию.
+    */
+}
