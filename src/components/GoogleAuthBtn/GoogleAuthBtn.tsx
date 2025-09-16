@@ -2,7 +2,7 @@ import { api } from "../api/api";
 import css from "./GoogleAuthBtn.module.css";
 
 // Импортируем иконку Google (предполагая, что она у вас есть)
-import googleIcon from "../assets/google.svg";
+import googleIcon from "../../assets/google.svg";
 
 const GoogleAuthBtn = () => {
     // Получаем базовый URL из нашего инстанса axios

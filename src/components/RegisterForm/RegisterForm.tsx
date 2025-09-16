@@ -10,12 +10,13 @@ const RegistrationSchema = Yup.object().shape({
     // Давайте добавим его в схему, но в запросе (пока) отправлять не будем.
     // Если бэкенд ожидает `name`, нужно будет обновить RegistrationRequest.
     name: Yup.string()
-        .min(3, "Имя должно быть не короче 3 символов")
-        .max(50, "Слишком длинное имя")
+        .min(2, "Имя должно быть не короче 3 символов")
+        .max(254, "Слишком длинное имя")
         .required("Обязательное поле"),
 
     email: Yup.string()
         .email("Некорректный email")
+        .max(254, "Слишком длинный email")
         .required("Обязательное поле"),
 
     // --- Анализ безопасности (по вашему запросу) ---
@@ -23,6 +24,7 @@ const RegistrationSchema = Yup.object().shape({
     // чтобы повысить безопасность аккаунтов.
     password: Yup.string()
         .min(8, "Пароль должен быть не короче 8 символов")
+        .max(100, "Слишком длинный пароль")
         .matches(
             /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
             "Пароль должен содержать одну заглавную, одну строчную букву и одну цифру"
@@ -61,10 +63,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
         // Отправляем только те данные, что ожидает API (из auth.ts)
         //
         const apiValues: RegistrationRequest = {
+            name: values.name,
             email: values.email,
             password: values.password,
-            // Если бэкенд принимает name, добавьте его сюда
-            // name: values.name,
         };
         onSubmit(apiValues, formikHelpers);
     };

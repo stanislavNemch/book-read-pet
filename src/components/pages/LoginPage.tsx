@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import AuthLayout from "../AuthLayout/AuthLayout";
 import toast from "react-hot-toast";
 import LoginForm from "../LoginForm/LoginForm";
+import GoogleAuthBtn from "../GoogleAuthBtn/GoogleAuthBtn";
 
 const LoginPage = () => {
     // Получаем функцию login из нашего AuthContext
@@ -39,9 +40,7 @@ const LoginPage = () => {
 
     return (
         <AuthLayout>
-            {/* Здесь будет компонент GoogleAuthBtn (Шаг 6)
-              <GoogleAuthBtn /> 
-            */}
+            <GoogleAuthBtn />
 
             <LoginForm onSubmit={handleLogin} />
 

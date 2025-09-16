@@ -1,5 +1,6 @@
 // Запросы к API
 export interface RegistrationRequest {
+    name: string;
     email: string;
     password: string;
 }
