@@ -3,10 +3,9 @@ import * as Yup from "yup";
 import type { RegistrationRequest } from "../types/auth";
 import css from "./RegisterForm.module.css";
 
-// --- Схема валидации Yup (ТЗ п.5) ---
+// --- Схема валідації форми реєстрації ---
 const RegistrationSchema = Yup.object().shape({
-    // В макете 2-registration.pdf есть поле 'Ім'я'
-    // В вашем RegistrationRequest его нет.
+    // --- Поле "Ім'я" ---
     // Давайте добавим его в схему, но в запросе (пока) отправлять не будем.
     // Если бэкенд ожидает `name`, нужно будет обновить RegistrationRequest.
     name: Yup.string()
@@ -19,7 +18,7 @@ const RegistrationSchema = Yup.object().shape({
         .max(254, "Слишком длинный email")
         .required("Обязательное поле"),
 
-    // --- Анализ безопасности (по вашему запросу) ---
+    // --- Анализ безопасности пароля ---
     // Мы добавляем сложные правила для пароля,
     // чтобы повысить безопасность аккаунтов.
     password: Yup.string()
