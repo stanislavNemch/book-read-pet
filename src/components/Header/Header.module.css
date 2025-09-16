@@ -1,3 +1,37 @@
+/* Добавляем стили для шапки и нашей времянки */
+.header {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 16px 0;
+}
+
 .headerSection {
-   
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Кнопка выхода будет справа */
+    min-height: 40px; /* Зададим высоту */
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.logoutButton {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #ff6b08; /* Оранжевый из макета */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logoutButton:hover {
+    background-color: #e05e07;
 }
