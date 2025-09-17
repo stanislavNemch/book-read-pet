@@ -1,36 +1,119 @@
 .header {
     background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 16px 0;
+    box-shadow: 0px 2px 3px rgba(9, 30, 63, 0.1);
 }
 
-.headerSection {
+.headerContainer {
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* Кнопка выхода будет справа */
-    min-height: 40px; /* Зададим высоту */
+    justify-content: space-between;
+    height: 60px;
 }
 
-.userInfo {
+.logo {
+    font-family: "Abril Fatface", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #242a37;
+}
+
+.navWrapper {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+}
+
+.nav {
+    display: flex;
+    gap: 8px;
+}
+
+.navLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    border-radius: 50%;
+    background-color: #f5f7fa;
+    color: #a6abb9;
+    transition: background-color 250ms ease, color 250ms ease;
+}
+
+.navLink:hover {
+    background-color: #e2e6ea;
+}
+
+.navLink.active {
+    background-color: #ff6b08;
+    color: #ffffff;
+}
+
+.userMenu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-left: 12px;
+    border-left: 1px solid #e0e5eb;
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    border-radius: 50%;
+    background-color: #f5f7fa;
+    color: #242a37;
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.userName {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 300; /* В макете тонкое начертание */
+    color: #242a37;
 }
 
 .logoutButton {
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    background-color: #ff6b08; /* Оранжевый из макета */
-    color: white;
+    background: none;
     border: none;
-    border-radius: 4px;
+    text-decoration: underline;
+    color: #242a37;
+    font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 0;
 }
 
-.logoutButton:hover {
-    background-color: #e05e07;
+/* --- Mobile styles --- */
+@media screen and (max-width: 767px) {
+    .userName {
+        display: none; /* Прячем имя на маленьких экранах */
+    }
+
+    .userMenu {
+        padding-left: 8px;
+        gap: 0;
+    }
+}
+/* --- Tablet styles --- */
+@media screen and (min-width: 768px) and (max-width: 1279px) {
+    .userMenu {
+        padding-left: 8px;
+        gap: 8px;
+    }
+    .userName {
+        font-size: 12px;
+    }
+}
+/* --- Desktop styles --- */
+@media screen and (min-width: 1280px) {
+    .userMenu {
+        padding-left: 12px;
+        gap: 12px;
+    }
+    .userName {
+        font-size: 14px;
+    }
 }

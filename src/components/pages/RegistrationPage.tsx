@@ -4,6 +4,7 @@ import { authService } from "../services/authService";
 import type { RegistrationRequest } from "../types/auth";
 import AuthLayout from "../AuthLayout/AuthLayout";
 import RegisterForm from "../RegisterForm/RegisterForm";
+import AuthHeader from "../AuthHeader/AuthHeader";
 
 const RegistrationPage = () => {
     const navigate = useNavigate();
@@ -34,15 +35,18 @@ const RegistrationPage = () => {
     };
 
     return (
-        <AuthLayout>
-            <RegisterForm onSubmit={handleRegister} />
+        <>
+            <AuthHeader />
+            <AuthLayout>
+                <RegisterForm onSubmit={handleRegister} />
 
-            {/* Ссылка "Вже з нами? Увійти" из макета */}
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-                <span>Вже з нами? </span>
-                <Link to="/login">Увійти</Link>
-            </div>
-        </AuthLayout>
+                {/* Ссылка "Вже з нами? Увійти" из макета */}
+                <div style={{ textAlign: "center", marginTop: "20px" }}>
+                    <span>Вже з нами? </span>
+                    <Link to="/login">Увійти</Link>
+                </div>
+            </AuthLayout>
+        </>
     );
 };
 

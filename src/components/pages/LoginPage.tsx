@@ -5,14 +5,7 @@ import type { LoginRequest, LoginResponse } from "../types/auth";
 import css from "./LoginPage.module.css";
 import Quote from "../Quote/Quote";
 import AuthFormContainer from "../AuthFormContainer/AuthFormContainer";
-
-const AuthHeader = () => {
-    return (
-        <header className={css.header}>
-            <p className={css.logo}>BR</p>
-        </header>
-    );
-};
+import AuthHeader from "../AuthHeader/AuthHeader";
 
 const LoginPage = () => {
     const { login } = useAuth();
