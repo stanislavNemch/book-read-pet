@@ -1,12 +1,21 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { authService } from "../services/authService";
 import type { RegistrationRequest } from "../types/auth";
-import AuthLayout from "../AuthLayout/AuthLayout";
-import RegisterForm from "../RegisterForm/RegisterForm";
 import AuthHeader from "../AuthHeader/AuthHeader";
+import RegisterForm from "../RegisterForm/RegisterForm";
+import GoogleAuthBtn from "../GoogleAuthBtn/GoogleAuthBtn";
+import AuthInfo from "../AuthInfo/AuthInfo";
+import clsx from "clsx";
+// Стили со страницы логина для общей структуры
+import css from "./LoginPage.module.css";
+// Уникальные стили для этой страницы
+import regCss from "./RegistrationPage.module.css";
 
 const RegistrationPage = () => {
+    // Состояние для управления видимостью мобильного инфо-окна
+    const [isInfoModalOpen, setInfoModalOpen] = useState(true);
     const navigate = useNavigate();
 
     const handleRegister = async (
@@ -14,22 +23,14 @@ const RegistrationPage = () => {
         { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
     ) => {
         try {
-            // Вызываем метод register из нашего authService
             await authService.register(values);
-
             toast.success("Регистрация прошла успешно! Теперь войдите.");
-
-            // После успешной регистрации перенаправляем на логин
             navigate("/login");
         } catch (error: any) {
-            console.error(error);
-            // Используем react-hot-toast для показа ошибок
             toast.error(
-                error.response?.data?.message ||
-                    "Ошибка при регистрации. Попробуйте снова."
+                error.response?.data?.message || "Ошибка при регистрации."
             );
         } finally {
-            // Сообщаем Formik, что отправка завершена
             setSubmitting(false);
         }
     };
@@ -37,15 +38,46 @@ const RegistrationPage = () => {
     return (
         <>
             <AuthHeader />
-            <AuthLayout>
-                <RegisterForm onSubmit={handleRegister} />
+            <main className={css.pageWrapper}>
+                {/* Секция с формой (левая колонка на десктопе) */}
+                <section className={css.formSection}>
+                    <div className={regCss.formContainer}>
+                        <GoogleAuthBtn />
+                        <RegisterForm onSubmit={handleRegister} />
+                        <div className={regCss.loginLinkWrapper}>
+                            <span>Вже з нами? </span>
+                            <Link to="/login" className={regCss.loginLink}>
+                                Увійти
+                            </Link>
+                        </div>
+                    </div>
+                </section>
 
-                {/* Ссылка "Вже з нами? Увійти" из макета */}
-                <div style={{ textAlign: "center", marginTop: "20px" }}>
-                    <span>Вже з нами? </span>
-                    <Link to="/login">Увійти</Link>
-                </div>
-            </AuthLayout>
+                {/* Секция с информацией (правая колонка на десктопе) */}
+                <section
+                    className={clsx(css.quoteSection, regCss.hideInfoOnMobile)}
+                >
+                    <AuthInfo />
+                </section>
+
+                {/* МОБИЛЬНОЕ ИНФОРМАЦИОННОЕ ОКНО (модалка) */}
+                {isInfoModalOpen && (
+                    <div className={regCss.mobileInfoModal}>
+                        <AuthInfo />
+                        <div className={regCss.modalButtons}>
+                            <Link to="/login" className={regCss.loginBtn}>
+                                Увійти
+                            </Link>
+                            <button
+                                onClick={() => setInfoModalOpen(false)}
+                                className={regCss.registerBtn}
+                            >
+                                Реєстрація
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </main>
         </>
     );
 };
