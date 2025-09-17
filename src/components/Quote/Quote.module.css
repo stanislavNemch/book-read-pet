@@ -1,0 +1,39 @@
+.quoteWrapper {
+    text-align: center;
+    padding: 20px;
+    max-width: 380px; /* Ограничим ширину для читабельности */
+    margin: 0 auto;
+}
+
+.icon {
+    margin-bottom: 20px;
+    /* Стили для SVG иконки */
+}
+
+.text {
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #242a37;
+    margin-bottom: 16px;
+}
+
+.author {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #898f9f;
+    position: relative;
+    display: inline-block;
+}
+
+.author::before {
+    content: "";
+    display: block;
+    width: 30px;
+    height: 1px;
+    background-color: #898f9f;
+    position: absolute;
+    left: -40px;
+    top: 50%;
+}

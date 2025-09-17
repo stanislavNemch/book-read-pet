@@ -1,0 +1,168 @@
+/* --- Mobile styles (до 767px) --- */
+.header {
+    padding: 16px 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 3px 0px rgba(9, 30, 63, 0.1);
+}
+
+.logo {
+    font-family: "Abril Fatface", sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #242a37;
+    margin: 0;
+}
+
+.pageWrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 55px);
+}
+
+.formSection {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 0;
+
+    /* Устанавливаем фон */
+    background-image: url("/img/background-image.webp");
+    background-size: cover;
+    background-position: center;
+
+    /* ✅ РЕШЕНИЕ №2: Готовим контейнер для оверлея */
+    position: relative;
+    z-index: 0; /* Создаем новый контекст наложения */
+}
+
+/* ✅ РЕШЕНИЕ №2: Создаем сам оверлей */
+.formSection::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(9, 30, 63, 0.8);
+    z-index: -1; /* Помещаем оверлей под контент, но над фоном */
+}
+
+.quoteSection {
+    background-color: #ffffff;
+    padding: 20px 0;
+}
+
+/* --- Tablet styles (768px и больше) --- */
+@media screen and (min-width: 768px) {
+    .header {
+        padding: 16px 32px;
+        box-shadow: none;
+        background-color: transparent;
+        position: absolute;
+        width: 100%;
+        z-index: 10;
+    }
+
+    /* ✅ РЕШЕНИЕ №1 и №2: Переносим фон и оверлей на обертку */
+    .pageWrapper {
+        background-image: url("/img/background-image.webp");
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        position: relative;
+        z-index: 0;
+        display: flex; /* Добавляем flex для центрирования */
+        flex-direction: column;
+        justify-content: center; /* Центрируем контент вертикально */
+    }
+
+    .pageWrapper::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(9, 30, 63, 0.8);
+        z-index: -1;
+    }
+
+    .formSection {
+        background-image: none; /* Убираем фон с секции */
+        padding-top: 0; /* Убираем лишний отступ */
+    }
+
+    /* Убираем фон и убираем оверлей с секции формы */
+    .formSection::before {
+        display: none;
+    }
+
+    .quoteSection {
+        background-color: transparent;
+        padding: 40px 0 0 0; /* Добавим отступ сверху */
+    }
+
+    /* ✅ РЕШЕНИЕ №1: Меняем цвет текста цитаты на белый */
+    /* Используем :global(), чтобы стилизовать дочерний компонент */
+    .quoteSection :global(.Quote_text__*) {
+        color: #ffffff;
+    }
+    .quoteSection :global(.Quote_author__*) {
+        color: #ffffff;
+    }
+    .quoteSection :global(.Quote_author__*::before) {
+        background-color: #ffffff;
+    }
+}
+
+/* --- Desktop styles (1280px и больше) --- */
+@media screen and (min-width: 1280px) {
+    .header {
+        position: static;
+        background-color: #ffffff;
+    }
+
+    .pageWrapper {
+        flex-direction: row;
+        background-image: none;
+        min-height: calc(100vh - 55px);
+        justify-content: flex-start; /* Убираем центрирование */
+    }
+
+    /* Убираем оверлей с общей обертки */
+    .pageWrapper::before {
+        display: none;
+    }
+
+    .formSection {
+        width: 40%;
+        /* Возвращаем фон и оверлей обратно на секцию */
+        background-image: url("/img/background-image.webp");
+        position: relative;
+        z-index: 0;
+    }
+
+    .formSection::before {
+        display: block; /* Показываем оверлей снова */
+    }
+
+    .quoteSection {
+        width: 60%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    /* Возвращаем темный цвет текста цитаты */
+    .quoteSection :global(.Quote_text__*) {
+        color: #242a37;
+    }
+    .quoteSection :global(.Quote_author__*) {
+        color: #898f9f;
+    }
+    .quoteSection :global(.Quote_author__*::before) {
+        background-color: #898f9f;
+    }
+}

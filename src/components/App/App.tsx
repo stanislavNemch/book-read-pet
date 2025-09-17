@@ -36,7 +36,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/google-redirect"
+                    path="/auth/google-redirect"
                     element={
                         <PublicRoute>
                             <GoogleRedirectPage />
