@@ -1,7 +1,6 @@
 .googleButton {
     display: flex;
     align-items: center;
-    justify-content: center;
     width: 100%;
     max-width: 150px; /* Ширина кнопки на мобилке */
     gap: 16px;
@@ -16,7 +15,7 @@
     color: #707375;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-bottom: 20px; /* Отступ от формы */
+    margin-bottom: 28px; /* Отступ от формы */
 }
 
 .googleButton:hover {

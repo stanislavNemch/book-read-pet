@@ -16,7 +16,7 @@
 .pageWrapper {
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 55px);
+    min-height: calc(100vh - 36px);
 }
 
 .formSection {
@@ -83,7 +83,7 @@
 
     .formSection {
         background-image: none;
-        padding-top: 0;
+        padding: 65px 0;
     }
 
     .formSection::before {
@@ -129,6 +129,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px 0;
+        padding: 0;
     }
 }

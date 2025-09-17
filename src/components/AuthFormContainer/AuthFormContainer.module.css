@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 335px; /* Ширина формы на мобилке */
+    max-width: 335px;
 }
 
 .registerLinkWrapper {

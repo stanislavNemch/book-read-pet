@@ -1,17 +1,24 @@
 .quoteWrapper {
     text-align: center;
     padding: 20px;
-    max-width: 380px; /* Ограничим ширину для читабельности */
+    max-width: 320px; /* Ограничим ширину для читабельности */
     margin: 0 auto;
 }
 
-.icon {
-    margin-bottom: 20px;
-    /* Стили для SVG иконки */
+.quotes {
+    font-family: "Abril Fatface", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 59px;
+    text-align: center;
+    color: #ff6b08;
+    line-height: 0.1;
+    vertical-align: bottom;
 }
 
 .text {
     font-family: "Montserrat", sans-serif;
+    font-weight: 500;
     font-size: 13px;
     line-height: 1.5;
     color: #242a37;
@@ -22,9 +29,14 @@
     font-family: "Montserrat", sans-serif;
     font-size: 14px;
     line-height: 1.2;
+    font-weight: 500;
     color: #898f9f;
-    position: relative;
-    display: inline-block;
+}
+
+.dividingLine {
+    width: 100px;
+    border: 1px solid rgba(36, 42, 55, 0.5);
+    margin: 0 auto 12px auto; /* Центрируем и добавляем отступ снизу */
 }
 
 .author::before {
@@ -36,4 +48,31 @@
     position: absolute;
     left: -40px;
     top: 50%;
+}
+
+@media screen and (min-width: 768px) {
+    .quoteWrapper {
+        padding: 0;
+        padding-bottom: 71px;
+        max-width: 526px;
+    }
+
+    .quotes {
+        font-size: 69px;
+    }
+
+    .text {
+        font-size: 24px;
+        line-height: 1.58;
+        margin-bottom: 20px;
+    }
+
+    .author {
+        font-size: 20px;
+    }
+
+    .dividingLine {
+        width: 150px;
+        margin-bottom: 12px;
+    }
 }
