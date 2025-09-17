@@ -39,8 +39,9 @@ const GoogleRedirectPage = () => {
                 // Это временная заглушка, т.к. бэкенд не вернул user
                 // В идеале: { email, id } из searchParams
                 userData: {
-                    email: "Загрузка...", // Нужно будет сделать запрос на /user
-                    id: "Загрузка...",
+                    name: "User", // Заглушка, т.к. имя не приходит
+                    email: "Email", // Нужно будет сделать запрос на /user
+                    id: "ID User",
                 },
             };
 
