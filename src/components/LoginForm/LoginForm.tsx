@@ -1,8 +1,6 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import type { LoginRequest } from "../types/auth";
-// Используем те же стили, что и для RegisterForm,
-// чтобы не дублировать код.
 import css from "../RegisterForm/RegisterForm.module.css";
 
 // --- Схема валидации Yup (ТЗ п.5) ---

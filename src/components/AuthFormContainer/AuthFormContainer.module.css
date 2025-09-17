@@ -21,7 +21,6 @@
 /* Tablet styles */
 @media screen and (min-width: 768px) {
     .container {
-        /* Превращаем контейнер в белую карточку */
         background-color: #ffffff;
         padding: 40px;
         border-radius: 20px;

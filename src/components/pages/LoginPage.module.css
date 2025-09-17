@@ -25,18 +25,13 @@
     align-items: center;
     justify-content: center;
     padding: 32px 0;
-
-    /* Устанавливаем фон */
     background-image: url("/img/background-image.webp");
     background-size: cover;
     background-position: center;
-
-    /* ✅ РЕШЕНИЕ №2: Готовим контейнер для оверлея */
     position: relative;
-    z-index: 0; /* Создаем новый контекст наложения */
+    z-index: 0;
 }
 
-/* ✅ РЕШЕНИЕ №2: Создаем сам оверлей */
 .formSection::before {
     content: "";
     position: absolute;
@@ -45,7 +40,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(9, 30, 63, 0.8);
-    z-index: -1; /* Помещаем оверлей под контент, но над фоном */
+    z-index: -1;
 }
 
 .quoteSection {
@@ -58,13 +53,11 @@
     .header {
         padding: 16px 32px;
         box-shadow: none;
-        background-color: transparent;
         position: absolute;
         width: 100%;
         z-index: 10;
     }
 
-    /* ✅ РЕШЕНИЕ №1 и №2: Переносим фон и оверлей на обертку */
     .pageWrapper {
         background-image: url("/img/background-image.webp");
         background-size: cover;
@@ -72,9 +65,9 @@
         min-height: 100vh;
         position: relative;
         z-index: 0;
-        display: flex; /* Добавляем flex для центрирования */
+        display: flex;
         flex-direction: column;
-        justify-content: center; /* Центрируем контент вертикально */
+        justify-content: center;
     }
 
     .pageWrapper::before {
@@ -89,30 +82,16 @@
     }
 
     .formSection {
-        background-image: none; /* Убираем фон с секции */
-        padding-top: 0; /* Убираем лишний отступ */
+        background-image: none;
+        padding-top: 0;
     }
 
-    /* Убираем фон и убираем оверлей с секции формы */
     .formSection::before {
         display: none;
     }
 
     .quoteSection {
-        background-color: transparent;
-        padding: 40px 0 0 0; /* Добавим отступ сверху */
-    }
-
-    /* ✅ РЕШЕНИЕ №1: Меняем цвет текста цитаты на белый */
-    /* Используем :global(), чтобы стилизовать дочерний компонент */
-    .quoteSection :global(.Quote_text__*) {
-        color: #ffffff;
-    }
-    .quoteSection :global(.Quote_author__*) {
-        color: #ffffff;
-    }
-    .quoteSection :global(.Quote_author__*::before) {
-        background-color: #ffffff;
+        padding: 40px 0 0 0;
     }
 }
 
@@ -127,24 +106,22 @@
         flex-direction: row;
         background-image: none;
         min-height: calc(100vh - 55px);
-        justify-content: flex-start; /* Убираем центрирование */
+        justify-content: flex-start;
     }
 
-    /* Убираем оверлей с общей обертки */
     .pageWrapper::before {
         display: none;
     }
 
     .formSection {
         width: 40%;
-        /* Возвращаем фон и оверлей обратно на секцию */
         background-image: url("/img/background-image.webp");
         position: relative;
         z-index: 0;
     }
 
     .formSection::before {
-        display: block; /* Показываем оверлей снова */
+        display: block;
     }
 
     .quoteSection {
@@ -153,16 +130,5 @@
         align-items: center;
         justify-content: center;
         padding: 20px 0;
-    }
-
-    /* Возвращаем темный цвет текста цитаты */
-    .quoteSection :global(.Quote_text__*) {
-        color: #242a37;
-    }
-    .quoteSection :global(.Quote_author__*) {
-        color: #898f9f;
-    }
-    .quoteSection :global(.Quote_author__*::before) {
-        background-color: #898f9f;
     }
 }

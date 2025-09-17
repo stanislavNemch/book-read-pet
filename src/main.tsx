@@ -13,7 +13,6 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
-            {/* 2. Оборачиваем AuthProvider и App */}
             <BrowserRouter>
                 <AuthProvider>
                     <App />

@@ -6,7 +6,6 @@ import css from "./LoginPage.module.css";
 import Quote from "../Quote/Quote";
 import AuthFormContainer from "../AuthFormContainer/AuthFormContainer";
 
-// Простой компонент хедера, можно вынести в отдельный файл если нужно
 const AuthHeader = () => {
     return (
         <header className={css.header}>

@@ -35,10 +35,6 @@ const RegistrationPage = () => {
 
     return (
         <AuthLayout>
-            {/* Здесь будет компонент GoogleAuthBtn (Шаг 6)
-              <GoogleAuthBtn /> 
-            */}
-
             <RegisterForm onSubmit={handleRegister} />
 
             {/* Ссылка "Вже з нами? Увійти" из макета */}

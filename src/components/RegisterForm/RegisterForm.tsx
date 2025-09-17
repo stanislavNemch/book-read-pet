@@ -6,8 +6,6 @@ import css from "./RegisterForm.module.css";
 // --- Схема валідації форми реєстрації ---
 const RegistrationSchema = Yup.object().shape({
     // --- Поле "Ім'я" ---
-    // Давайте добавим его в схему, но в запросе (пока) отправлять не будем.
-    // Если бэкенд ожидает `name`, нужно будет обновить RegistrationRequest.
     name: Yup.string()
         .min(2, "Имя должно быть не короче 3 символов")
         .max(254, "Слишком длинное имя")
@@ -60,7 +58,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
         formikHelpers: { setSubmitting: (isSubmitting: boolean) => void }
     ) => {
         // Отправляем только те данные, что ожидает API (из auth.ts)
-        //
         const apiValues: RegistrationRequest = {
             name: values.name,
             email: values.email,
