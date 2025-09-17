@@ -37,47 +37,59 @@ const RegistrationPage = () => {
 
     return (
         <>
-            <AuthHeader />
-            <main className={css.pageWrapper}>
-                {/* Секция с формой (левая колонка на десктопе) */}
-                <section className={css.formSection}>
-                    <div className={regCss.formContainer}>
-                        <GoogleAuthBtn />
-                        <RegisterForm onSubmit={handleRegister} />
-                        <div className={regCss.loginLinkWrapper}>
-                            <span>Вже з нами? </span>
-                            <Link to="/login" className={regCss.loginLink}>
-                                Увійти
-                            </Link>
+            {" "}
+            <div className={css.pageContainer}>
+                <AuthHeader />
+                <main className={css.pageWrapper}>
+                    {/* Секция с формой (левая колонка на десктопе) */}
+                    <section className={css.formSection}>
+                        <div className={regCss.formContainer}>
+                            <GoogleAuthBtn />
+                            <RegisterForm onSubmit={handleRegister} />
+                            <div className={regCss.loginLinkWrapper}>
+                                <span>Вже з нами? </span>
+                                <Link to="/login" className={regCss.loginLink}>
+                                    Увійти
+                                </Link>
+                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                {/* Секция с информацией (правая колонка на десктопе) */}
-                <section
-                    className={clsx(css.quoteSection, regCss.hideInfoOnMobile)}
-                >
-                    <AuthInfo />
-                </section>
-
-                {/* МОБИЛЬНОЕ ИНФОРМАЦИОННОЕ ОКНО (модалка) */}
-                {isInfoModalOpen && (
-                    <div className={regCss.mobileInfoModal}>
+                    {/* Секция с информацией (правая колонка на десктопе) */}
+                    <section
+                        className={clsx(
+                            css.quoteSection,
+                            regCss.hideInfoOnMobile
+                        )}
+                    >
                         <AuthInfo />
-                        <div className={regCss.modalButtons}>
-                            <Link to="/login" className={regCss.loginBtn}>
-                                Увійти
-                            </Link>
-                            <button
-                                onClick={() => setInfoModalOpen(false)}
-                                className={regCss.registerBtn}
-                            >
-                                Реєстрація
-                            </button>
+                    </section>
+
+                    {/* МОБИЛЬНОЕ ИНФОРМАЦИОННОЕ ОКНО (модалка) */}
+                    {isInfoModalOpen && (
+                        <div className={regCss.mobileInfoModal}>
+                            <AuthHeader />
+                            <div className={regCss.modalContent}>
+                                <AuthInfo />
+                                <div className={regCss.modalButtons}>
+                                    <Link
+                                        to="/login"
+                                        className={regCss.loginBtn}
+                                    >
+                                        Увійти
+                                    </Link>
+                                    <button
+                                        onClick={() => setInfoModalOpen(false)}
+                                        className={regCss.registerBtn}
+                                    >
+                                        Реєстрація
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                )}
-            </main>
+                    )}
+                </main>
+            </div>
         </>
     );
 };

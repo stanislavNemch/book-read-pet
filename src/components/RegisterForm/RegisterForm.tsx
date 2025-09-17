@@ -77,7 +77,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
                     {/* Поле "Ім'я" */}
                     <div className={css.fieldGroup}>
                         <label htmlFor="name" className={css.label}>
-                            Ім'я *
+                            Ім'я <span className={css.starlet}>*</span>
                         </label>
                         <Field
                             type="text"
@@ -96,7 +96,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
                     {/* Поле "Електронна адреса" */}
                     <div className={css.fieldGroup}>
                         <label htmlFor="email" className={css.label}>
-                            Електронна адреса *
+                            Електронна адреса{" "}
+                            <span className={css.starlet}>*</span>
                         </label>
                         <Field
                             type="email"
@@ -115,7 +116,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
                     {/* Поле "Пароль" */}
                     <div className={css.fieldGroup}>
                         <label htmlFor="password" className={css.label}>
-                            Пароль *
+                            Пароль <span className={css.starlet}>*</span>
                         </label>
                         <Field
                             type="password"
@@ -134,7 +135,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
                     {/* Поле "Підтвердити пароль" */}
                     <div className={css.fieldGroup}>
                         <label htmlFor="confirmPassword" className={css.label}>
-                            Підтвердити пароль *
+                            Підтвердити пароль{" "}
+                            <span className={css.starlet}>*</span>
                         </label>
                         <Field
                             type="password"
