@@ -1,4 +1,10 @@
 /* --- Mobile styles (до 767px) --- */
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
 .header {
     padding: 16px 20px;
     background-color: #ffffff;
@@ -16,7 +22,7 @@
 .pageWrapper {
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - 36px);
+    flex-grow: 1;
 }
 
 .formSection {
@@ -62,7 +68,6 @@
         background-image: url("/img/background-image.webp");
         background-size: cover;
         background-position: center;
-        min-height: 100vh;
         position: relative;
         z-index: 0;
         display: flex;
@@ -100,13 +105,12 @@
     .header {
         position: static;
         background-color: #ffffff;
+        display: none;
     }
 
     .pageWrapper {
         flex-direction: row;
-        background-image: none;
-        min-height: calc(100vh - 55px);
-        justify-content: flex-start;
+        width: 100%;
     }
 
     .pageWrapper::before {

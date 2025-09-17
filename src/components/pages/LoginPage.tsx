@@ -29,18 +29,20 @@ const LoginPage = () => {
 
     return (
         <>
-            <AuthHeader />
-            <main className={css.pageWrapper}>
-                {/* Эта секция будет с фоном */}
-                <section className={css.formSection}>
-                    <AuthFormContainer onLogin={handleLogin} />
-                </section>
+            <div className={css.pageContainer}>
+                <AuthHeader />
+                <main className={css.pageWrapper}>
+                    {/* Эта секция будет с фоном */}
+                    <section className={css.formSection}>
+                        <AuthFormContainer onLogin={handleLogin} />
+                    </section>
 
-                {/* Эта секция будет с цитатой */}
-                <section className={css.quoteSection}>
-                    <Quote />
-                </section>
-            </main>
+                    {/* Эта секция будет с цитатой */}
+                    <section className={css.quoteSection}>
+                        <Quote />
+                    </section>
+                </main>
+            </div>
         </>
     );
 };
