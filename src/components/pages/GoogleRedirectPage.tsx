@@ -11,48 +11,55 @@ const GoogleRedirectPage = () => {
 
     useEffect(() => {
         try {
-            // 1. Парсим query-параметры из URL
-            const searchParams = new URLSearchParams(location.search);
+            let searchParams;
+
+            // Проверяем, есть ли параметры в стандартном location.search (после "?")
+            if (location.search) {
+                searchParams = new URLSearchParams(location.search);
+            } else {
+                // Если нет, предполагаем, что бэкенд прислал "сломанный" URL с пробелами.
+                // 1. Декодируем URL, чтобы '%20' превратился в пробел.
+                const brokenPath = decodeURIComponent(location.pathname);
+                // 2. Разделяем строку по первому пробелу.
+                const queryString = brokenPath.substring(
+                    brokenPath.indexOf(" ") + 1
+                );
+                // 3. Создаем параметры из "починенной" строки.
+                searchParams = new URLSearchParams(queryString);
+            }
+
             const accessToken = searchParams.get("accessToken");
             const refreshToken = searchParams.get("refreshToken");
             const sid = searchParams.get("sid");
 
-            // TODO: Бэкенд также должен вернуть userData (id, email)
-            // Либо нам нужно сделать доп. запрос на /user/me
-            // Предположим, что userData тоже в query (нужно уточнить у бэкенда)
-            // const email = searchParams.get('email');
-            // const id = searchParams.get('id');
-
             if (!accessToken || !refreshToken || !sid) {
-                // Если чего-то не хватает, это ошибка
                 throw new Error(
-                    "Ошибка аутентификации Google. Отсутствуют токены."
+                    "Ошибка аутентификации Google. Отсутствуют необходимые токены."
                 );
             }
 
-            // 2. Собираем данные в тот же формат, что и при обычном логине
-            //
+            // Собираем данные в объект, соответствующий типу LoginResponse.
+            // Используем "заглушки", так как бэкенд не возвращает данные
+            // пользователя в параметрах. В будущем здесь может быть
+            // дополнительный запрос к API для получения user info.
             const loginData: LoginResponse = {
                 accessToken,
                 refreshToken,
                 sid,
-                // Это временная заглушка, т.к. бэкенд не вернул user
-                // В идеале: { email, id } из searchParams
                 userData: {
-                    name: "User", // Заглушка, т.к. имя не приходит
-                    email: "Email", // Нужно будет сделать запрос на /user
-                    id: "ID User",
+                    name: "User",
+                    email: "Email...",
+                    id: "ID...",
                 },
             };
 
-            // 3. Используем нашу стандартную функцию login
+            // Вызываем функцию login из AuthContext
             login(loginData);
 
-            // 4. Перенаправляем пользователя
             toast.success("Вход через Google выполнен успешно!");
             navigate("/library");
         } catch (error: any) {
-            console.error(error);
+            console.error("Ошибка при обработке редиректа Google:", error);
             toast.error(error.message || "Не удалось войти через Google.");
             navigate("/login");
         }
@@ -62,7 +69,7 @@ const GoogleRedirectPage = () => {
     return (
         <div style={{ padding: "40px", textAlign: "center" }}>
             <h2>Выполняется вход через Google...</h2>
-            {/* Сюда можно добавить компонент Loader (спиннер) */}
+            <p>Пожалуйста, подождите.</p>
         </div>
     );
 };
