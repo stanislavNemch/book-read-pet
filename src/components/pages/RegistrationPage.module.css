@@ -32,22 +32,35 @@
 
 /* --- Стили для мобильного модального окна --- */
 .mobileInfoModal {
-    display: none; /* По умолчанию скрыто */
+    position: fixed;
+    top: var(--auth-header-height);
+    left: 0;
+    width: 100%;
+    height: calc(100dvh - var(--auth-header-height));
+    background-color: #ffffff;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .modalContent {
-    flex-grow: 1;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 14px 20px 32px;
+    box-sizing: border-box;
     width: 100%;
 }
 
 .modalButtons {
     display: flex;
     gap: 20px;
-    margin-top: 20px;
+    margin: 0 auto;
     max-width: 480px;
     width: 100%;
     box-sizing: border-box;
@@ -79,55 +92,6 @@
 }
 
 @media screen and (max-width: 767px) {
-    .mobileInfoModal {
-        position: fixed;
-        inset: 0;
-        /* height заменим на 100dvh — лучше на мобильных */
-        height: 100dvh;
-        /* убираем центрирование, даем нормальный поток */
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        background-color: #ffffff;
-        z-index: 100;
-        /* пусть модалка сама контролирует скролл, если контент длинный */
-        overflow: hidden;
-    }
-
-    /* Если хотите закрепить хедер внутри модалки */
-    .mobileInfoModal header {
-        flex-shrink: 0;
-        /* опционально: закрепить при прокрутке */
-        position: sticky;
-        top: 0;
-        background: #fff;
-        z-index: 5;
-    }
-
-    .modalContent {
-        /* Растянуть на оставшееся пространство */
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        /* Внутренний скролл */
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        padding: 24px 20px 32px;
-        box-sizing: border-box;
-        width: 100%;
-    }
-
-    /* Кнопки внизу — пусть не растягиваются */
-    .modalButtons {
-        gap: 16px;
-        padding: 0;
-        margin: 0 auto;
-    }
-
-    /* Скрываем блок вне модалки */
     .hideInfoOnMobile {
         display: none;
     }

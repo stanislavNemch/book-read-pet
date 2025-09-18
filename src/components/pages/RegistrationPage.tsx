@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { authService } from "../services/authService";
 import type { RegistrationRequest } from "../types/auth";
@@ -8,15 +8,47 @@ import RegisterForm from "../RegisterForm/RegisterForm";
 import GoogleAuthBtn from "../GoogleAuthBtn/GoogleAuthBtn";
 import AuthInfo from "../AuthInfo/AuthInfo";
 import clsx from "clsx";
-// Стили со страницы логина для общей структуры
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import css from "./LoginPage.module.css";
-// Уникальные стили для этой страницы
 import regCss from "./RegistrationPage.module.css";
 
 const RegistrationPage = () => {
-    // Состояние для управления видимостью мобильного инфо-окна
+    // По умолчанию хотим показывать модалку на мобильном
     const [isInfoModalOpen, setInfoModalOpen] = useState(true);
+
+    const isMobile = useMediaQuery("(max-width: 767px)");
     const navigate = useNavigate();
+    const location = useLocation();
+    const initialMountRef = useRef(true);
+    const lastPathRef = useRef(location.pathname);
+
+    // Лочим скролл только если реально открыта модалка на мобильном
+    useBodyScrollLock(isMobile && isInfoModalOpen, { breakpoint: 768 });
+
+    // Реагируем на смену ширины: если ушли с mobile — закрыть; если вернулись — открыть (можно убрать reopen, если не нужно)
+    useEffect(() => {
+        if (!isMobile) {
+            if (isInfoModalOpen) setInfoModalOpen(false);
+        } else {
+            // Если нужно, чтобы при возврате на мобильное модалка снова появлялась:
+            if (!isInfoModalOpen) setInfoModalOpen(true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isMobile]);
+
+    // Закрывать модалку при смене маршрута (КРОМЕ первого рендера)
+    useEffect(() => {
+        if (initialMountRef.current) {
+            initialMountRef.current = false;
+            lastPathRef.current = location.pathname;
+            return;
+        }
+        if (location.pathname !== lastPathRef.current) {
+            lastPathRef.current = location.pathname;
+            if (isInfoModalOpen) setInfoModalOpen(false);
+        }
+    }, [location, isInfoModalOpen]);
 
     const handleRegister = async (
         values: RegistrationRequest,
@@ -35,62 +67,52 @@ const RegistrationPage = () => {
         }
     };
 
+    const shouldShowModal = isMobile && isInfoModalOpen;
+
     return (
-        <>
-            {" "}
-            <div className={css.pageContainer}>
-                <AuthHeader />
-                <main className={css.pageWrapper}>
-                    {/* Секция с формой (левая колонка на десктопе) */}
-                    <section className={css.formSection}>
-                        <div className={regCss.formContainer}>
-                            <GoogleAuthBtn />
-                            <RegisterForm onSubmit={handleRegister} />
-                            <div className={regCss.loginLinkWrapper}>
-                                <span>Вже з нами? </span>
-                                <Link to="/login" className={regCss.loginLink}>
+        <div className={css.pageContainer}>
+            <AuthHeader />
+            <main className={css.pageWrapper}>
+                <section className={css.formSection}>
+                    <div className={regCss.formContainer}>
+                        <GoogleAuthBtn />
+                        <RegisterForm onSubmit={handleRegister} />
+                        <div className={regCss.loginLinkWrapper}>
+                            <span>Вже з нами? </span>
+                            <Link to="/login" className={regCss.loginLink}>
+                                Увійти
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    className={clsx(css.quoteSection, regCss.hideInfoOnMobile)}
+                >
+                    <AuthInfo />
+                </section>
+
+                {shouldShowModal && (
+                    <div className={regCss.mobileInfoModal}>
+                        <div className={regCss.modalContent}>
+                            <AuthInfo />
+                            <div className={regCss.modalButtons}>
+                                <Link to="/login" className={regCss.loginBtn}>
                                     Увійти
                                 </Link>
+                                <button
+                                    type="button"
+                                    onClick={() => setInfoModalOpen(false)}
+                                    className={regCss.registerBtn}
+                                >
+                                    Реєстрація
+                                </button>
                             </div>
                         </div>
-                    </section>
-
-                    {/* Секция с информацией (правая колонка на десктопе) */}
-                    <section
-                        className={clsx(
-                            css.quoteSection,
-                            regCss.hideInfoOnMobile
-                        )}
-                    >
-                        <AuthInfo />
-                    </section>
-
-                    {/* МОБИЛЬНОЕ ИНФОРМАЦИОННОЕ ОКНО (модалка) */}
-                    {isInfoModalOpen && (
-                        <div className={regCss.mobileInfoModal}>
-                            <AuthHeader />
-                            <div className={regCss.modalContent}>
-                                <AuthInfo />
-                                <div className={regCss.modalButtons}>
-                                    <Link
-                                        to="/login"
-                                        className={regCss.loginBtn}
-                                    >
-                                        Увійти
-                                    </Link>
-                                    <button
-                                        onClick={() => setInfoModalOpen(false)}
-                                        className={regCss.registerBtn}
-                                    >
-                                        Реєстрація
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </main>
-            </div>
-        </>
+                    </div>
+                )}
+            </main>
+        </div>
     );
 };
 

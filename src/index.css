@@ -13,6 +13,7 @@
 
     color: #242a37;
     background-color: #fff;
+    --auth-header-height: 60px;
 
     font-optical-sizing: auto;
     font-synthesis: none;
@@ -65,4 +66,11 @@ img {
     display: block;
     max-width: 100%;
     height: auto;
+}
+
+.scroll-lock {
+    position: fixed;
+    overflow: hidden;
+    inset: 0;
+    width: 100%;
 }
