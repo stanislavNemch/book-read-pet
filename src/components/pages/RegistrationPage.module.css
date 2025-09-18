@@ -31,6 +31,26 @@
 }
 
 /* --- Стили для мобильного модального окна --- */
+.modalLayer {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    pointer-events: none; /* активируем только нужные части */
+}
+
+.modalOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    transition: opacity 250ms ease;
+    pointer-events: auto;
+}
+
+.modalOverlayOpen {
+    opacity: 1;
+}
+
 .mobileInfoModal {
     position: fixed;
     top: var(--auth-header-height);
@@ -38,10 +58,26 @@
     width: 100%;
     height: calc(100dvh - var(--auth-header-height));
     background-color: #ffffff;
-    z-index: 100;
+    z-index: 160; /* поверх overlay */
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    /* Анимация появления / скрытия */
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 250ms ease, transform 250ms ease;
+    pointer-events: auto;
+}
+
+.mobileInfoModalOpen {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobileInfoModalClosing {
+    opacity: 0;
+    transform: translateY(16px);
 }
 
 .modalContent {

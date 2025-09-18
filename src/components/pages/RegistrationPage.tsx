@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { authService } from "../services/authService";
 import type { RegistrationRequest } from "../types/auth";
@@ -8,47 +8,57 @@ import RegisterForm from "../RegisterForm/RegisterForm";
 import GoogleAuthBtn from "../GoogleAuthBtn/GoogleAuthBtn";
 import AuthInfo from "../AuthInfo/AuthInfo";
 import clsx from "clsx";
+
 import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
-import { useMediaQuery } from "../hooks/useMediaQuery";
+import { useModalState } from "../hooks/useModalState";
+import { useEscapeKey } from "../hooks/useEscapeKey";
+import { useOnClickOutside } from "../hooks/useOnClickOutside";
+
 import css from "./LoginPage.module.css";
 import regCss from "./RegistrationPage.module.css";
 
+const ANIMATION_MS = 250;
+
 const RegistrationPage = () => {
-    // По умолчанию хотим показывать модалку на мобильном
-    const [isInfoModalOpen, setInfoModalOpen] = useState(true);
+    // Универсальный модальный стейт
+    const modal = useModalState({
+        initialOpen: true,
+        mobileOnly: true,
+        closeOnRouteChange: true,
+        reopenOnReturnToMobile: true,
+    });
 
-    const isMobile = useMediaQuery("(max-width: 767px)");
     const navigate = useNavigate();
-    const location = useLocation();
-    const initialMountRef = useRef(true);
-    const lastPathRef = useRef(location.pathname);
 
-    // Лочим скролл только если реально открыта модалка на мобильном
-    useBodyScrollLock(isMobile && isInfoModalOpen, { breakpoint: 768 });
+    // Лочим скролл только если открыто и мобильный
+    useBodyScrollLock(modal.isOpen && modal.isMobile, { breakpoint: 768 });
 
-    // Реагируем на смену ширины: если ушли с mobile — закрыть; если вернулись — открыть (можно убрать reopen, если не нужно)
+    // Анимационное состояние (нужно, чтобы при закрытии мы дождались transition)
+    const [isMounted, setIsMounted] = useState(modal.isOpen);
+    const [isClosing, setIsClosing] = useState(false);
+
     useEffect(() => {
-        if (!isMobile) {
-            if (isInfoModalOpen) setInfoModalOpen(false);
-        } else {
-            // Если нужно, чтобы при возврате на мобильное модалка снова появлялась:
-            if (!isInfoModalOpen) setInfoModalOpen(true);
+        if (modal.isOpen) {
+            setIsMounted(true);
+            setIsClosing(false);
+        } else if (isMounted) {
+            setIsClosing(true);
+            const t = setTimeout(() => {
+                setIsMounted(false);
+                setIsClosing(false);
+            }, ANIMATION_MS);
+            return () => clearTimeout(t);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isMobile]);
+    }, [modal.isOpen, isMounted]);
 
-    // Закрывать модалку при смене маршрута (КРОМЕ первого рендера)
-    useEffect(() => {
-        if (initialMountRef.current) {
-            initialMountRef.current = false;
-            lastPathRef.current = location.pathname;
-            return;
-        }
-        if (location.pathname !== lastPathRef.current) {
-            lastPathRef.current = location.pathname;
-            if (isInfoModalOpen) setInfoModalOpen(false);
-        }
-    }, [location, isInfoModalOpen]);
+    // Закрытие по Escape
+    useEscapeKey(() => modal.close(), modal.isOpen);
+
+    // Реф контейнера (чтобы клик вне закрывал)
+    const modalRef = useRef<HTMLDivElement | null>(null);
+    useOnClickOutside(modalRef, () => {
+        if (modal.isOpen) modal.close();
+    });
 
     const handleRegister = async (
         values: RegistrationRequest,
@@ -67,7 +77,12 @@ const RegistrationPage = () => {
         }
     };
 
-    const shouldShowModal = isMobile && isInfoModalOpen;
+    const showModalLayer = modal.shouldRender && isMounted;
+    const modalContentClass = clsx(
+        regCss.mobileInfoModal,
+        modal.isOpen && !isClosing && regCss.mobileInfoModalOpen,
+        isClosing && regCss.mobileInfoModalClosing
+    );
 
     return (
         <div className={css.pageContainer}>
@@ -92,21 +107,44 @@ const RegistrationPage = () => {
                     <AuthInfo />
                 </section>
 
-                {shouldShowModal && (
-                    <div className={regCss.mobileInfoModal}>
-                        <div className={regCss.modalContent}>
-                            <AuthInfo />
-                            <div className={regCss.modalButtons}>
-                                <Link to="/login" className={regCss.loginBtn}>
-                                    Увійти
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={() => setInfoModalOpen(false)}
-                                    className={regCss.registerBtn}
-                                >
-                                    Реєстрація
-                                </button>
+                {showModalLayer && (
+                    <div className={regCss.modalLayer} aria-live="off">
+                        {/* Overlay */}
+                        <div
+                            className={clsx(
+                                regCss.modalOverlay,
+                                modal.isOpen &&
+                                    !isClosing &&
+                                    regCss.modalOverlayOpen
+                            )}
+                            // Дополнительно можно закрывать по клику прямо здесь:
+                            onClick={() => modal.close()}
+                        />
+                        {/* Modal Content */}
+                        <div
+                            className={modalContentClass}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-label="Информация о сервисе"
+                            ref={modalRef}
+                        >
+                            <div className={regCss.modalContent}>
+                                <AuthInfo />
+                                <div className={regCss.modalButtons}>
+                                    <Link
+                                        to="/login"
+                                        className={regCss.loginBtn}
+                                    >
+                                        Увійти
+                                    </Link>
+                                    <button
+                                        type="button"
+                                        onClick={() => modal.close()}
+                                        className={regCss.registerBtn}
+                                    >
+                                        Реєстрація
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
