@@ -79,22 +79,55 @@
 }
 
 @media screen and (max-width: 767px) {
-    /* Показываем модальное окно только на мобильных */
     .mobileInfoModal {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        min-height: 648px;
-        background-color: #ffffff;
-        z-index: 100;
+        inset: 0;
+        /* height заменим на 100dvh — лучше на мобильных */
+        height: 100dvh;
+        /* убираем центрирование, даем нормальный поток */
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        justify-content: flex-start;
+        align-items: stretch;
+        background-color: #ffffff;
+        z-index: 100;
+        /* пусть модалка сама контролирует скролл, если контент длинный */
+        overflow: hidden;
     }
 
+    /* Если хотите закрепить хедер внутри модалки */
+    .mobileInfoModal header {
+        flex-shrink: 0;
+        /* опционально: закрепить при прокрутке */
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 5;
+    }
+
+    .modalContent {
+        /* Растянуть на оставшееся пространство */
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        /* Внутренний скролл */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 24px 20px 32px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* Кнопки внизу — пусть не растягиваются */
+    .modalButtons {
+        gap: 16px;
+        padding: 0;
+        margin: 0 auto;
+    }
+
+    /* Скрываем блок вне модалки */
     .hideInfoOnMobile {
         display: none;
     }
