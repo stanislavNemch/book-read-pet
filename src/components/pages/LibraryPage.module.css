@@ -1,4 +1,11 @@
 .pageWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 335px;
     padding-top: 20px;
     padding-bottom: 20px;
 }
@@ -8,14 +15,43 @@
 }
 
 .instructions {
+    display: none;
     margin-top: 20px;
 }
 
+/* Стили для управления видимостью форм */
+.mobileFormWrapper {
+    display: block;
+}
+
+.desktopFormWrapper {
+    display: none;
+}
+
+@media screen and (min-width: 768px) {
+    .pageWrapper {
+        max-width: 767px;
+        margin: 0 auto;
+        gap: 32px;
+    }
+    .mobileFormWrapper {
+        display: none;
+    }
+    .desktopFormWrapper {
+        display: block;
+    }
+    .instructions {
+        display: block;
+    }
+    .rightColumn {
+        max-width: 600px;
+    }
+}
+/* Конец стилей для управления формами */
+
 @media screen and (min-width: 1280px) {
     .pageWrapper {
-        display: flex;
-        gap: 32px;
-        align-items: flex-start;
+        max-width: 1280px;
     }
 
     .leftColumn {
@@ -23,7 +59,6 @@
     }
 
     .rightColumn {
-        width: 288px;
         flex-shrink: 0;
     }
 

@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import { authService } from "../services/authService";
 import { useAuth } from "../hooks/useAuth";
 import appCss from "../App/App.module.css";
-import { FiHome, FiBookOpen } from "react-icons/fi"; // Иконки из react-icons
+import { FiHome, FiBookOpen } from "react-icons/fi";
 
 export default function Header() {
     const { logout, user } = useAuth();
@@ -23,9 +23,6 @@ export default function Header() {
         }
     };
 
-    // API при логине возвращает только email и id.
-    // Поле `name` приходит только при регистрации.
-    // Поэтому мы временно будем использовать первую букву email для аватара.
     const userName = user?.name || user?.email || "User";
     const userAvatarLetter = userName.charAt(0).toUpperCase();
 
@@ -36,12 +33,11 @@ export default function Header() {
                     BR
                 </NavLink>
 
-                <div className={css.userMenu}>
-                    <div className={css.avatar}>{userAvatarLetter}</div>
-                    <span className={css.userName}>{userName}</span>
-                </div>
-
                 <div className={css.navWrapper}>
+                    <div className={css.userMenu}>
+                        <div className={css.avatar}>{userAvatarLetter}</div>
+                        <span className={css.userName}>{userName}</span>
+                    </div>
                     <nav className={css.nav}>
                         <NavLink
                             to="/library"
@@ -60,7 +56,6 @@ export default function Header() {
                             <FiHome size={22} />
                         </NavLink>
                     </nav>
-
                     <button onClick={handleLogout} className={css.logoutButton}>
                         Вихід
                     </button>

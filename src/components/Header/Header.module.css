@@ -53,8 +53,6 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding-left: 12px;
-    border-left: 1px solid #e0e5eb;
 }
 
 .avatar {
@@ -72,7 +70,7 @@
 
 .userName {
     font-size: 14px;
-    font-weight: 300; /* В макете тонкое начертание */
+    font-weight: 300;
     color: #242a37;
 }
 
@@ -89,31 +87,32 @@
 /* --- Mobile styles --- */
 @media screen and (max-width: 767px) {
     .userName {
-        display: none; /* Прячем имя на маленьких экранах */
+        display: none;
+    }
+    .userMenu {
+        order: 2;
+    }
+    .nav {
+        order: 1;
+    }
+    .logoutButton {
+        order: 3;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .navWrapper {
+        flex-grow: 1;
+        justify-content: flex-end;
     }
 
     .userMenu {
-        padding-left: 8px;
-        gap: 0;
-    }
-}
-/* --- Tablet styles --- */
-@media screen and (min-width: 768px) and (max-width: 1279px) {
-    .userMenu {
-        padding-left: 8px;
-        gap: 8px;
-    }
-    .userName {
-        font-size: 12px;
-    }
-}
-/* --- Desktop styles --- */
-@media screen and (min-width: 1280px) {
-    .userMenu {
+        margin: 0 auto;
         padding-left: 12px;
-        gap: 12px;
+        border-left: 1px solid #e0e5eb;
     }
+
     .userName {
-        font-size: 14px;
+        display: block;
     }
 }

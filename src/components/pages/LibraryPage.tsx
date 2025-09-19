@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Header from "../Header/Header";
@@ -7,24 +8,43 @@ import { addBook, getUserBooks } from "../services/bookService";
 import type { AddBookRequest } from "../types/book";
 import AddBookForm from "../AddBookForm/AddBookForm";
 import Instructions from "../Instructions/Instructions";
-// import MyBooks from '../MyBooks/MyBooks'; // Раскомментируем, когда создадим
+import Modal from "../Modal/Modal";
 
 const LibraryPage = () => {
     const queryClient = useQueryClient();
+    const [isInstructionsModalOpen, setInstructionsModalOpen] = useState(false);
 
-    // 1. Загрузка данных с помощью React Query
     const { data, isLoading, isError } = useQuery({
         queryKey: ["userBooks"],
         queryFn: getUserBooks,
     });
 
-    // 2. Мутация для добавления книги
+    useEffect(() => {
+        if (isLoading) return; // Не выполнять логику, пока данные грузятся
+
+        const hasSeenInstructions = localStorage.getItem("hasSeenInstructions");
+        const isLibraryEmpty =
+            !data ||
+            (data.goingToRead.length === 0 &&
+                data.currentlyReading.length === 0 &&
+                data.finishedReading.length === 0);
+
+        if (!hasSeenInstructions && isLibraryEmpty) {
+            setInstructionsModalOpen(true);
+        }
+    }, [data, isLoading]);
+
+    const handleCloseInstructions = () => {
+        localStorage.setItem("hasSeenInstructions", "true");
+        setInstructionsModalOpen(false);
+    };
+
     const mutation = useMutation({
         mutationFn: (newBook: AddBookRequest) => addBook(newBook),
         onSuccess: () => {
             toast.success("Книга успішно додана!");
-            // При успехе - инвалидируем кеш, чтобы список книг обновился
             queryClient.invalidateQueries({ queryKey: ["userBooks"] });
+            handleCloseInstructions();
         },
         onError: (error) => {
             toast.error(`Помилка: ${error.message}`);
@@ -35,8 +55,22 @@ const LibraryPage = () => {
         await mutation.mutateAsync(values);
     };
 
-    if (isLoading) return <div>Загрузка...</div>;
-    if (isError) return <div>Помилка завантаження даних</div>;
+    if (isLoading)
+        return (
+            <div style={{ padding: "20px" }}>Завантаження бібліотеки...</div>
+        );
+    if (isError)
+        return (
+            <div style={{ padding: "20px" }}>
+                Помилка завантаження даних. Спробуйте оновити сторінку.
+            </div>
+        );
+
+    const isLibraryEmpty =
+        !data ||
+        (data.goingToRead.length === 0 &&
+            data.currentlyReading.length === 0 &&
+            data.finishedReading.length === 0);
 
     return (
         <>
@@ -44,17 +78,18 @@ const LibraryPage = () => {
             <main className={appCss.container}>
                 <div className={css.pageWrapper}>
                     <div className={css.leftColumn}>
-                        <AddBookForm onSubmit={handleAddBook} />
+                        <div className={css.desktopFormWrapper}>
+                            <AddBookForm onSubmit={handleAddBook} />
+                        </div>
+
                         <div className={css.mainContent}>
-                            {data && (
-                                // Здесь будет компонент MyBooks с передачей data
-                                <p>
-                                    Книги будут тут. У вас их пока{" "}
-                                    {data.goingToRead.length +
-                                        data.currentlyReading.length +
-                                        data.finishedReading.length}
-                                    .
-                                </p>
+                            {isLibraryEmpty ? (
+                                <div className={css.mobileFormWrapper}>
+                                    <AddBookForm onSubmit={handleAddBook} />
+                                </div>
+                            ) : (
+                                // Тут буде компонент MyBooks
+                                <p>Списки книг будуть тут.</p>
                             )}
                         </div>
                     </div>
@@ -65,6 +100,13 @@ const LibraryPage = () => {
                     </div>
                 </div>
             </main>
+
+            <Modal
+                isOpen={isInstructionsModalOpen}
+                onClose={handleCloseInstructions}
+            >
+                <Instructions />
+            </Modal>
         </>
     );
 };
