@@ -4,11 +4,12 @@ import toast from "react-hot-toast";
 import Header from "../Header/Header";
 import appCss from "../App/App.module.css";
 import css from "./LibraryPage.module.css";
-import { addBook, getUserBooks } from "../services/bookService";
+import { addBook, getUserBooks, deleteBook } from "../services/bookService";
 import type { AddBookRequest } from "../types/book";
 import AddBookForm from "../AddBookForm/AddBookForm";
 import Instructions from "../Instructions/Instructions";
 import Modal from "../Modal/Modal";
+import MyBooks from "../MyBooks/MyBooks";
 
 const LibraryPage = () => {
     const queryClient = useQueryClient();
@@ -33,6 +34,22 @@ const LibraryPage = () => {
             setInstructionsModalOpen(true);
         }
     }, [data, isLoading]);
+
+    const deleteMutation = useMutation({
+        mutationFn: (bookId: string) => deleteBook(bookId),
+        onSuccess: (deletedBook) => {
+            toast.success(`Книга "${deletedBook.title}" видалена`);
+            queryClient.invalidateQueries({ queryKey: ["userBooks"] });
+        },
+        onError: (error) => {
+            toast.error(`Помилка видалення: ${error.message}`);
+        },
+    });
+
+    const handleDeleteBook = (bookId: string) => {
+        // Здесь можно добавить модальное окно подтверждения
+        deleteMutation.mutate(bookId);
+    };
 
     const handleCloseInstructions = () => {
         localStorage.setItem("hasSeenInstructions", "true");
@@ -88,16 +105,22 @@ const LibraryPage = () => {
                                     <AddBookForm onSubmit={handleAddBook} />
                                 </div>
                             ) : (
-                                // Тут буде компонент MyBooks
-                                <p>Списки книг будуть тут.</p>
+                                data && (
+                                    <MyBooks
+                                        data={data}
+                                        onDeleteBook={handleDeleteBook}
+                                    />
+                                )
                             )}
                         </div>
                     </div>
-                    <div className={css.rightColumn}>
-                        <div className={css.instructions}>
-                            <Instructions />
+                    {isLibraryEmpty && (
+                        <div className={css.rightColumn}>
+                            <div className={css.instructions}>
+                                <Instructions />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </main>
 
