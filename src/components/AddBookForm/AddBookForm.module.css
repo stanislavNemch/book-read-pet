@@ -1,0 +1,83 @@
+.form {
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.fieldRow {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.fieldGroup label {
+    color: #898f9f;
+    font-size: 14px;
+}
+
+.fieldGroup input {
+    border: 1px solid #a6abb9;
+    background-color: #f6f7fb;
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box; /* Важно */
+}
+
+.error {
+    color: #d32f2f;
+    font-size: 12px;
+    height: 14px; /* Резервируем место под ошибку */
+}
+
+.submitButton {
+    padding: 12px 20px;
+    background-color: transparent;
+    color: #ff6b08;
+    border: 1px solid #ff6b08;
+    cursor: pointer;
+    align-self: center;
+    width: 170px;
+}
+
+/* Tablet */
+@media screen and (min-width: 768px) {
+    .form {
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 16px;
+    }
+
+    .fieldRow {
+        flex-direction: row;
+        align-items: flex-end;
+        flex-grow: 1;
+        gap: 16px;
+    }
+
+    .submitButton {
+        align-self: flex-end;
+        height: 42px; /* Выравниваем по высоте с инпутами */
+    }
+}
+
+/* Desktop */
+@media screen and (min-width: 1280px) {
+    .form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .submitButton {
+        align-self: center;
+    }
+}

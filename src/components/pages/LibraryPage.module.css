@@ -1,0 +1,33 @@
+.pageWrapper {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.mainContent {
+    margin-top: 20px;
+}
+
+.instructions {
+    margin-top: 20px;
+}
+
+@media screen and (min-width: 1280px) {
+    .pageWrapper {
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+    }
+
+    .leftColumn {
+        flex: 1;
+    }
+
+    .rightColumn {
+        width: 288px;
+        flex-shrink: 0;
+    }
+
+    .instructions {
+        margin-top: 0;
+    }
+}
