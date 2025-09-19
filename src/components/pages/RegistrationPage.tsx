@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import AnimatedPage from "../AnimatedPage/AnimatedPage"; // Импортируем AnimatedPage
 import toast from "react-hot-toast";
 import { authService } from "../services/authService";
 import type { RegistrationRequest } from "../types/auth";
@@ -85,7 +86,7 @@ const RegistrationPage = () => {
     );
 
     return (
-        <div className={css.pageContainer}>
+        <AnimatedPage className={css.pageContainer}>
             <AuthHeader />
             <main className={css.pageWrapper}>
                 <section className={css.formSection}>
@@ -150,7 +151,7 @@ const RegistrationPage = () => {
                     </div>
                 )}
             </main>
-        </div>
+        </AnimatedPage>
     );
 };
 

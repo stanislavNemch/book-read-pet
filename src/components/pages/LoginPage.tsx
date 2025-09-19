@@ -6,6 +6,7 @@ import css from "./LoginPage.module.css";
 import Quote from "../Quote/Quote";
 import AuthFormContainer from "../AuthFormContainer/AuthFormContainer";
 import AuthHeader from "../AuthHeader/AuthHeader";
+import AnimatedPage from "../AnimatedPage/AnimatedPage";
 
 const LoginPage = () => {
     const { login } = useAuth();
@@ -29,7 +30,7 @@ const LoginPage = () => {
 
     return (
         <>
-            <div className={css.pageContainer}>
+            <AnimatedPage className={css.pageContainer}>
                 <AuthHeader />
                 <main className={css.pageWrapper}>
                     {/* Эта секция будет с фоном */}
@@ -42,7 +43,7 @@ const LoginPage = () => {
                         <Quote />
                     </section>
                 </main>
-            </div>
+            </AnimatedPage>
         </>
     );
 };
