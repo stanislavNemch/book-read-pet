@@ -53,6 +53,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    border-left: 1px solid #e0e5eb;
 }
 
 .avatar {
@@ -109,7 +110,7 @@
     .userMenu {
         margin: 0 auto;
         padding-left: 12px;
-        border-left: 1px solid #e0e5eb;
+        border-left: none;
     }
 
     .userName {
