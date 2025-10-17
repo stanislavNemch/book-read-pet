@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { authService } from "../src/components/services/authService";
-import type { LoginRequest, LoginResponse } from "../src/components/types/auth";
-import Quote from "../src/components/Quote/Quote";
-import AuthFormContainer from "../src/components/AuthFormContainer/AuthFormContainer";
-import AuthHeader from "../src/components/AuthHeader/AuthHeader";
-import AnimatedPage from "../src/components/AnimatedPage/AnimatedPage";
-import { useAuth } from "../src/components/hooks/useAuth";
+import { authService } from "../services/authService";
+import type { LoginRequest, LoginResponse } from "../types/auth";
+import Quote from "../components/Quote/Quote";
+import AuthFormContainer from "../components/AuthFormContainer/AuthFormContainer";
+import AuthHeader from "../components/AuthHeader/AuthHeader";
+import AnimatedPage from "../components/AnimatedPage/AnimatedPage";
+import { useAuth } from "../hooks/useAuth";
 import css from "./styles/LoginPage.module.css";
 
 const LoginPage = () => {

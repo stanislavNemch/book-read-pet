@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../../src/components/hooks/useAuth";
-import type { LoginResponse } from "../../src/components/types/auth";
+import { useAuth } from "../../hooks/useAuth";
+import type { LoginResponse } from "../../types/auth";
 import toast from "react-hot-toast";
 
 const GoogleRedirectPage = () => {

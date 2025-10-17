@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import Header from "../src/components/Header/Header";
-import appCss from "../src/components/App/App.module.css";
+import Header from "../components/Header/Header";
+import appCss from "../styles/container.module.css";
 import css from "./styles/LibraryPage.module.css";
-import {
-    addBook,
-    getUserBooks,
-    deleteBook,
-} from "../src/components/services/bookService";
-import type { AddBookRequest } from "../src/components/types/book";
-import AddBookForm from "../src/components/AddBookForm/AddBookForm";
-import Instructions from "../src/components/Instructions/Instructions";
-import Modal from "../src/components/Modal/Modal";
-import MyBooks from "../src/components/MyBooks/MyBooks";
+import { addBook, getUserBooks, deleteBook } from "../services/bookService";
+import type { AddBookRequest } from "../types/book";
+import AddBookForm from "../components/AddBookForm/AddBookForm";
+import Instructions from "../components/Instructions/Instructions";
+import Modal from "../components/Modal/Modal";
+import MyBooks from "../components/MyBooks/MyBooks";
 
 const LibraryPage = () => {
     const queryClient = useQueryClient();
