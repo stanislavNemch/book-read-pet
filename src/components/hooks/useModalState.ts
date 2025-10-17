@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useRouter } from "next/router";
 import { useMediaQuery } from "./useMediaQuery";
 
 interface UseModalStateOptions {
@@ -21,9 +21,9 @@ export function useModalState(options: UseModalStateOptions = {}) {
 
     const [isOpen, setIsOpen] = useState(initialOpen);
     const isMobile = useMediaQuery(mobileQuery);
-    const location = useLocation();
+    const router = useRouter();
     const initialMountRef = useRef(true);
-    const lastPathRef = useRef(location.pathname);
+    const lastPathRef = useRef(router.pathname);
 
     // Методы управления
     const open = useCallback(() => setIsOpen(true), []);
@@ -35,14 +35,14 @@ export function useModalState(options: UseModalStateOptions = {}) {
         if (!closeOnRouteChange) return;
         if (initialMountRef.current) {
             initialMountRef.current = false;
-            lastPathRef.current = location.pathname;
+            lastPathRef.current = router.pathname;
             return;
         }
-        if (location.pathname !== lastPathRef.current) {
-            lastPathRef.current = location.pathname;
+        if (router.pathname !== lastPathRef.current) {
+            lastPathRef.current = router.pathname;
             setIsOpen(false);
         }
-    }, [location, closeOnRouteChange]);
+    }, [router.pathname, closeOnRouteChange]);
 
     // Реакция на уход с мобильной ширины
     useEffect(() => {

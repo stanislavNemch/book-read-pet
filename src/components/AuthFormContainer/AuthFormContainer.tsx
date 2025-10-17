@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import css from "./AuthFormContainer.module.css";
 import LoginForm from "../LoginForm/LoginForm";
 import GoogleAuthBtn from "../GoogleAuthBtn/GoogleAuthBtn";
@@ -17,7 +17,7 @@ const AuthFormContainer: React.FC<AuthFormContainerProps> = ({ onLogin }) => {
             <GoogleAuthBtn />
             <LoginForm onSubmit={onLogin} />
             <div className={css.registerLinkWrapper}>
-                <Link to="/register" className={css.registerLink}>
+                <Link href="/register" className={css.registerLink}>
                     Реєстрація
                 </Link>
             </div>
