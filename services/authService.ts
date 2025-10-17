@@ -1,4 +1,4 @@
-import { api, setAuthHeader } from "../api/api";
+import { api, setAuthHeader } from "../lib/api";
 import type {
     RegistrationRequest,
     RegistrationResponse,

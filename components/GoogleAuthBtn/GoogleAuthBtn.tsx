@@ -1,4 +1,4 @@
-import { api } from "../../api/api";
+import { api } from "../../lib/api";
 import toast from "react-hot-toast";
 import css from "./GoogleAuthBtn.module.css";
 
