@@ -10,9 +10,10 @@ import clsx from "clsx";
 import type { Book } from "../../types/book";
 import type { AddPlanningRequest } from "../../types/training";
 import { startPlanning } from "../../services/trainingService";
-import { deleteBook } from "../../services/bookService"; // Импортируем функцию глобального удаления
+import { deleteBook } from "../../services/bookService";
 import css from "./CreateTrainingForm.module.css";
 
+// ... (остальной код компонента без изменений) ...
 interface CreateTrainingFormProps {
     books: Book[]; // Все книги из "Маю намір прочитати"
 }
@@ -35,18 +36,20 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
 }) => {
     const queryClient = useQueryClient();
 
-    // Состояния компонента
-    const [trainingBooks, setTrainingBooks] = useState<Book[]>([]); // Книги в текущей тренировке
-    const [isBookSelectorOpen, setIsBookSelectorOpen] = useState(false); // Видимость выпадающей таблицы
-    const [selectedBookId, setSelectedBookId] = useState<string | null>(null); // ID книги, выбранной в таблице для добавления
+    const [trainingBooks, setTrainingBooks] = useState<Book[]>([]);
+    const [isBookSelectorOpen, setIsBookSelectorOpen] = useState(false);
+    const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
 
-    // Мутация для старта тренировки
     const startPlanningMutation = useMutation({
         mutationFn: (newPlanning: AddPlanningRequest) =>
             startPlanning(newPlanning),
         onSuccess: () => {
             toast.success("Тренування успішно створено!");
+            // Обновляем данные о тренировке
             queryClient.invalidateQueries({ queryKey: ["activeTraining"] });
+            // --- ВОТ ИСПРАВЛЕНИЕ ---
+            // Обновляем общий список книг, чтобы они переместились в "Читаю"
+            queryClient.invalidateQueries({ queryKey: ["userBooks"] });
         },
         onError: (error: any) => {
             toast.error(
@@ -55,12 +58,10 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
         },
     });
 
-    // Мутация для ГЛОБАЛЬНОГО удаления книги из библиотеки
     const deleteBookMutation = useMutation({
         mutationFn: (bookId: string) => deleteBook(bookId),
         onSuccess: (deletedBook) => {
             toast.success(`Книга "${deletedBook.title}" видалена з бібліотеки`);
-            // Обновляем общий список книг, что автоматически обновит и наш компонент
             queryClient.invalidateQueries({ queryKey: ["userBooks"] });
         },
         onError: (error: any) => {
@@ -71,7 +72,6 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
         },
     });
 
-    // Книги, доступные для выбора (еще не в списке тренировки)
     const availableBooksForSelection = allAvailableBooks.filter(
         (ab) => !trainingBooks.some((tb) => tb._id === ab._id)
     );
@@ -83,7 +83,7 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
         );
         if (bookToAdd) {
             setTrainingBooks((prev) => [...prev, bookToAdd]);
-            setSelectedBookId(null); // Сбрасываем выбор
+            setSelectedBookId(null);
         }
     };
 
@@ -92,16 +92,15 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
     };
 
     const handleDeleteBookGlobally = (e: React.MouseEvent, bookId: string) => {
-        e.stopPropagation(); // Предотвращаем выбор строки при клике на иконку удаления
+        e.stopPropagation();
         deleteBookMutation.mutate(bookId);
     };
 
     const toggleBookSelector = () => {
-        // Если мы собираемся закрыть список (т.е. он сейчас открыт)
         if (isBookSelectorOpen) {
-            setSelectedBookId(null); // Сбрасываем выбранную книгу
+            setSelectedBookId(null);
         }
-        setIsBookSelectorOpen((prev) => !prev); // Переключаем видимость
+        setIsBookSelectorOpen((prev) => !prev);
     };
 
     return (
@@ -129,7 +128,6 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                     return (
                         <Form className={css.form}>
                             <div className={css.datePickers}>
-                                {/* Поля для выбора дат */}
                                 <div className={css.dateInputWrapper}>
                                     <Field
                                         name="startDate"
@@ -181,7 +179,7 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                             <div className={css.bookSelector}>
                                 <div
                                     className={css.bookSelectorTrigger}
-                                    onClick={toggleBookSelector} // Используем новую функцию
+                                    onClick={toggleBookSelector}
                                 >
                                     <span>Обрати книги з бібліотеки</span>
                                     <span
@@ -302,7 +300,6 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                                 className={css.error}
                             />
 
-                            {/* Список уже добавленных книг */}
                             {trainingBooks.length > 0 && (
                                 <div
                                     className={clsx(
@@ -310,6 +307,18 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                                         css.trainingList
                                     )}
                                 >
+                                    <div className={css.bookHeader}>
+                                        <div className={css.bookCell}>
+                                            Назва книги
+                                        </div>
+                                        <div className={css.bookCell}>
+                                            Автор
+                                        </div>
+                                        <div className={css.bookCell}>Рік</div>
+                                        <div className={css.bookCell}>
+                                            Стор.
+                                        </div>
+                                    </div>
                                     {trainingBooks.map((book) => (
                                         <div
                                             key={book._id}

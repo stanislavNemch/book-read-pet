@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import type { Planning } from "../../types/training";
-import css from "./ActiveTraining.module.css"; // Используем общие стили
+import css from "./ActiveTraining.module.css";
 
 interface GoalsProps {
     planning: Planning;
 }
 
-// Вспомогательная функция для подсчета дней
 const calculateDaysBetween = (start: string, end: string): number => {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -19,18 +18,18 @@ const Goals: React.FC<GoalsProps> = ({ planning }) => {
 
     useEffect(() => {
         const today = new Date();
-        const endOfYear = new Date(today.getFullYear(), 11, 31); // 31 декабря
+        const endOfYear = new Date(today.getFullYear(), 11, 31);
         const todayStr = today.toISOString().split("T")[0];
         const endOfYearStr = endOfYear.toISOString().split("T")[0];
         setDaysToEndOfYear(calculateDaysBetween(todayStr, endOfYearStr));
     }, []);
 
+    // --- ИСПРАВЛЕНО ЗДЕСЬ ---
     const daysUntilGoalEnd = calculateDaysBetween(
         new Date().toISOString().split("T")[0],
         planning.endDate
     );
     const totalBooks = planning.books.length;
-    // Предполагаем, что прочитанная книга имеет pagesFinished >= pagesTotal
     const booksRead = planning.books.filter(
         (book) => book.pagesFinished >= book.pagesTotal
     ).length;
@@ -57,7 +56,6 @@ const Goals: React.FC<GoalsProps> = ({ planning }) => {
                 )}
             </div>
 
-            {/* Таймеры - как в макете, но пока без логики */}
             <div className={css.timersContainer}>
                 <div className={css.timerBox}>
                     <h4>До кінця року залишилось</h4>

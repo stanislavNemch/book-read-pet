@@ -1,7 +1,6 @@
 import type { Book } from "./book";
 
 // Запрос на создание нового планирования (тренировки)
-// POST /planning
 export interface AddPlanningRequest {
     startDate: string; // 'YYYY-MM-DD'
     endDate: string; // 'YYYY-MM-DD'
@@ -10,12 +9,11 @@ export interface AddPlanningRequest {
 
 // Точка статистики для графика
 export interface StatPoint {
-    date: string; // 'YYYY-MM-DD'
-    pagesCount: number; // Обратите внимание: в документации "string", но скорее всего это ошибка, должно быть число. Используем number.
+    date: string;
+    pagesCount: number;
 }
 
-// Объект планирования, который приходит от бэкенда
-// GET /planning
+// Объект планирования, который приходит от бэкенда (с исправленными полями)
 export interface Planning {
     _id: string;
     startDate: string;
@@ -27,7 +25,6 @@ export interface Planning {
 }
 
 // Запрос на добавление прочитанных страниц
-// PATCH /planning
 export interface ReadPagesRequest {
     pages: number;
 }
