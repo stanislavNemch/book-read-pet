@@ -46,19 +46,19 @@ export default function Header() {
                     </div>
                     <nav className={css.nav}>
                         <Link
-                            href="/library"
+                            href="/training"
                             className={clsx(
                                 css.navLink,
-                                isActive("/library") && css.active
+                                isActive("/training") && css.active
                             )}
                         >
                             <FiBookOpen size={22} />
                         </Link>
                         <Link
-                            href="/training"
+                            href="/library"
                             className={clsx(
                                 css.navLink,
-                                isActive("/training") && css.active
+                                isActive("/library") && css.active
                             )}
                         >
                             <FiHome size={22} />
