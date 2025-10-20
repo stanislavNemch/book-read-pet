@@ -15,7 +15,8 @@ import AddBookForm from "../components/AddBookForm/AddBookForm";
 import Instructions from "../components/Instructions/Instructions";
 import Modal from "../components/Modal/Modal";
 import MyBooks from "../components/MyBooks/MyBooks";
-import BookReviewForm from "../components/BookReviewForm/BookReviewForm"; // Импортируем новую форму
+import BookReviewForm from "../components/BookReviewForm/BookReviewForm";
+import Loader from "../components/Loader/Loader";
 
 const LibraryPage = () => {
     const queryClient = useQueryClient();
@@ -119,16 +120,25 @@ const LibraryPage = () => {
         });
     };
 
-    if (isLoading)
+    if (isLoading) {
         return (
-            <div style={{ padding: "20px" }}>Завантаження бібліотеки...</div>
+            <>
+                <Header />
+                <Loader type="content" />
+            </>
         );
-    if (isError)
+    }
+
+    if (isError) {
         return (
-            <div style={{ padding: "20px" }}>
-                Помилка завантаження даних. Спробуйте оновити сторінку.
-            </div>
+            <>
+                <Header />
+                <div style={{ padding: "20px" }}>
+                    Помилка завантаження даних. Спробуйте оновити сторінку.
+                </div>
+            </>
         );
+    }
 
     const isLibraryEmpty =
         !data ||

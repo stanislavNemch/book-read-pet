@@ -1,0 +1,35 @@
+/* Общий контейнер, который центрирует спиннер */
+.fullPageWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+.contentWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 0; /* Отступ сверху и снизу в области контента */
+}
+
+/* Сам спиннер */
+.spinner {
+    border: 8px solid #f3f3f3; /* Светло-серый фон круга */
+    border-top: 8px solid #ff6b08; /* Оранжевый цвет */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+}
+
+/* Анимация вращения */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

@@ -4,7 +4,8 @@ import { getUserBooks } from "../services/bookService";
 import Header from "../components/Header/Header";
 import appCss from "../styles/container.module.css";
 import CreateTrainingForm from "../components/CreateTrainingForm/CreateTrainingForm";
-import ActiveTraining from "../components/ActiveTraining/ActiveTraining"; // Импортируем новый компонент
+import ActiveTraining from "../components/ActiveTraining/ActiveTraining";
+import Loader from "../components/Loader/Loader";
 
 const TrainingPage = () => {
     // Запрос на получение активной тренировки
@@ -25,7 +26,7 @@ const TrainingPage = () => {
         return (
             <>
                 <Header />
-                <div style={{ padding: "20px" }}>Завантаження даних...</div>
+                <Loader type="content" />
             </>
         );
     }

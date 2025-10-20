@@ -3,6 +3,7 @@ import { authService } from "../services/authService";
 import type { UserData, LoginResponse } from "../types/auth";
 import { AuthContext } from "./AuthContext";
 import { authStorage } from "../utils/authStorage";
+import Loader from "../components/Loader/Loader"; // 1. Импортируем наш лоадер
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -10,7 +11,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<UserData | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true); // 1. Добавляем состояние загрузки
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         try {
@@ -24,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         } catch (error) {
             console.error("Failed to initialize auth state", error);
         } finally {
-            setIsLoading(false); // 2. В любом случае (нашли токен или нет) завершаем загрузку
+            setIsLoading(false);
         }
     }, []);
 
@@ -44,21 +45,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setToken(null);
     };
 
-    // 3. Пока идет проверка, не рендерим остальное приложение
+    // 2. Заменяем div на компонент Loader
     if (isLoading) {
-        return (
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100vh",
-                    fontSize: "20px",
-                }}
-            >
-                Перевірка авторизації...
-            </div>
-        );
+        return <Loader type="full-page" />;
     }
 
     return (
