@@ -1,6 +1,6 @@
 import type { Book } from "../../types/book";
 import { FaBook } from "react-icons/fa";
-import clsx from "clsx"; // Импортируем утилиту clsx для удобного объединения классов
+import clsx from "clsx";
 import css from "./ActiveTraining.module.css";
 
 interface TrainingBookListProps {
@@ -8,11 +8,6 @@ interface TrainingBookListProps {
 }
 
 const TrainingBookList: React.FC<TrainingBookListProps> = ({ books }) => {
-    const handleCheckboxChange = (bookId: string, isChecked: boolean) => {
-        console.log(`Book ${bookId} is now ${isChecked ? "read" : "unread"}`);
-        // TODO: В будущем здесь будет мутация для обновления статуса книги
-    };
-
     return (
         <div className={css.bookListContainer}>
             <div className={css.bookHeader}>
@@ -25,23 +20,19 @@ const TrainingBookList: React.FC<TrainingBookListProps> = ({ books }) => {
                 const isFinished = book.pagesFinished >= book.pagesTotal;
                 return (
                     <div key={book._id} className={css.bookRow}>
-                        {/* 1. Исправлено здесь: класс bookCell применяется всегда */}
                         <div className={css.bookCell}>
+                            {/* ИСПРАВЛЕНО: Чекбокс теперь просто индикатор.
+                                Он неактивен (disabled) и его состояние (checked)
+                                полностью зависит от данных с сервера.
+                            */}
                             <input
                                 type="checkbox"
                                 className={css.checkbox}
-                                defaultChecked={isFinished}
-                                onChange={(e) =>
-                                    handleCheckboxChange(
-                                        book._id,
-                                        e.target.checked
-                                    )
-                                }
-                                // Если книга уже отмечена как прочитанная, чекбокс неактивен
-                                disabled={isFinished}
+                                checked={isFinished}
+                                readOnly // Говорим React, что мы не будем менять его вручную
+                                disabled
                             />
                             <FaBook className={css.bookIcon} />
-                            {/* 2. Условный класс применяется к span, а не ко всей ячейке */}
                             <span
                                 className={clsx(
                                     isFinished && css.finishedTitle
@@ -50,7 +41,6 @@ const TrainingBookList: React.FC<TrainingBookListProps> = ({ books }) => {
                                 {book.title}
                             </span>
                         </div>
-                        {/* 3. И здесь: clsx объединяет классы, а не заменяет их */}
                         <div
                             className={clsx(
                                 css.bookCell,

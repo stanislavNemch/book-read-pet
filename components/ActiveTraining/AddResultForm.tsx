@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { addReadPages } from "../../services/trainingService";
 import type { ReadPagesRequest } from "../../types/training";
-import css from "./ActiveTraining.module.css";
+import css from "./ActiveTraining.module.css"; // Будем использовать общие стили
 
 const ResultSchema = Yup.object().shape({
     pages: Yup.number()
@@ -20,7 +20,7 @@ const AddResultForm: React.FC = () => {
         mutationFn: (data: ReadPagesRequest) => addReadPages(data),
         onSuccess: () => {
             toast.success("Результат додано!");
-            // Обновляем данные тренировки, чтобы увидеть изменения в статистике и книгах
+            // Обновляем данные тренировки, чтобы увидеть изменения во всех блоках
             queryClient.invalidateQueries({ queryKey: ["activeTraining"] });
         },
         onError: (error: any) => {
