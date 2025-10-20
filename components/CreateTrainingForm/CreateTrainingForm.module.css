@@ -1,7 +1,6 @@
 .container {
     background-color: #fff;
-    padding: 20px;
-    box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
+    padding: 20px 0;
 }
 
 .title {
@@ -22,36 +21,152 @@
 
 .datePickers {
     display: flex;
+    flex-direction: column;
     gap: 20px;
-    justify-content: center;
+}
+
+.dateInputWrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .dateInput {
     border: 1px solid #a6abb9;
+    background-color: #f6f7fb;
     padding: 12px;
     font-family: inherit;
     width: 100%;
+    box-sizing: border-box;
+    color: transparent; /* Скрываем стандартный текст даты */
+}
+
+/* Когда дата выбрана, показываем ее */
+.dateInput:valid {
+    color: #242a37;
+}
+
+.datePlaceholder {
+    position: absolute;
+    left: 12px;
+    color: #a6abb9;
+    pointer-events: none; /* Чтобы клики проходили на инпут */
+}
+
+/* Когда дата выбрана, скрываем наш плейсхолдер */
+.dateInput:valid + .datePlaceholder {
+    display: none;
+}
+
+.dateIcon {
+    position: absolute;
+    right: 12px;
+    color: #a6abb9;
+    pointer-events: none;
+}
+
+/* Скрываем стандартную иконку календаря */
+.dateInput::-webkit-calendar-picker-indicator {
+    background: none;
+    cursor: pointer;
+    width: 24px; /* Область клика */
+    height: 100%;
+    position: absolute;
+    right: 0;
 }
 
 .bookSelector {
     display: flex;
+    flex-direction: column;
     gap: 20px;
+}
+
+.selectWrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.selectWrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 15px;
+    color: #a6abb9;
+    pointer-events: none;
 }
 
 .select {
     width: 100%;
     border: 1px solid #a6abb9;
+    background-color: #f6f7fb;
     padding: 12px;
-    height: 150px; /* Для отображения нескольких книг */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
 }
 
 .addButton {
-    padding: 12px 20px;
+    padding: 12px 38px;
     background-color: #f6f7fb;
     color: #242a37;
-    border: 1px solid #a6abb9;
+    border: 1px solid #242a37;
     cursor: pointer;
-    align-self: flex-end; /* Выравниваем по низу */
+    align-self: center;
+    width: 170px;
+}
+
+.bookList {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #898f9f;
+}
+
+.bookHeader,
+.bookRow {
+    display: grid;
+    grid-template-columns: 3fr 2fr 1fr 1fr 0.5fr;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.bookHeader {
+    border-top: 1px solid #e0e5eb;
+    border-bottom: 1px solid #e0e5eb;
+    font-weight: 500;
+}
+
+.bookRow:not(:last-child) {
+    border-bottom: 1px solid #e0e5eb;
+}
+
+.bookCell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.titleCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bookIcon {
+    color: #a6abb9;
+    flex-shrink: 0;
+}
+
+.deleteButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ff6b08;
+    display: flex;
+    padding: 5px;
 }
 
 .submitButton {
@@ -64,6 +179,7 @@
     cursor: pointer;
     align-self: center;
     width: 200px;
+    margin-top: 20px;
 }
 
 .submitButton:disabled {
@@ -75,4 +191,34 @@
     color: #d32f2f;
     font-size: 12px;
     text-align: center;
+}
+
+@media screen and (min-width: 768px) {
+    .datePickers {
+        flex-direction: row;
+    }
+    .bookSelector {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+    .addButton {
+        margin-top: 0;
+        align-self: flex-start;
+        height: 47px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .bookHeader .bookCell:nth-child(2),
+    .bookHeader .bookCell:nth-child(3) {
+        display: none;
+    }
+    .bookRow .bookCell:nth-child(2),
+    .bookRow .bookCell:nth-child(3) {
+        display: none;
+    }
+    .bookHeader,
+    .bookRow {
+        grid-template-columns: 4fr 1fr 0.5fr;
+    }
 }
