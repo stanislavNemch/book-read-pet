@@ -1,0 +1,78 @@
+.container {
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
+}
+
+.title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #fff;
+    background-color: #b1b5c2;
+    padding: 10px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.datePickers {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.dateInput {
+    border: 1px solid #a6abb9;
+    padding: 12px;
+    font-family: inherit;
+    width: 100%;
+}
+
+.bookSelector {
+    display: flex;
+    gap: 20px;
+}
+
+.select {
+    width: 100%;
+    border: 1px solid #a6abb9;
+    padding: 12px;
+    height: 150px; /* Для отображения нескольких книг */
+}
+
+.addButton {
+    padding: 12px 20px;
+    background-color: #f6f7fb;
+    color: #242a37;
+    border: 1px solid #a6abb9;
+    cursor: pointer;
+    align-self: flex-end; /* Выравниваем по низу */
+}
+
+.submitButton {
+    padding: 14px;
+    background-color: #ff6b08;
+    color: white;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center;
+    width: 200px;
+}
+
+.submitButton:disabled {
+    background-color: #a6abb9;
+    cursor: not-allowed;
+}
+
+.error {
+    color: #d32f2f;
+    font-size: 12px;
+    text-align: center;
+}
