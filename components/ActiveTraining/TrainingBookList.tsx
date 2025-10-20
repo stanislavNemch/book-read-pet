@@ -1,13 +1,13 @@
 import type { Book } from "../../types/book";
 import { FaBook } from "react-icons/fa";
-import css from "./ActiveTraining.module.css"; // Используем общие стили
+import clsx from "clsx"; // Импортируем утилиту clsx для удобного объединения классов
+import css from "./ActiveTraining.module.css";
 
 interface TrainingBookListProps {
     books: Book[];
 }
 
 const TrainingBookList: React.FC<TrainingBookListProps> = ({ books }) => {
-    // Функция для обработки изменения состояния чекбокса (пока без логики)
     const handleCheckboxChange = (bookId: string, isChecked: boolean) => {
         console.log(`Book ${bookId} is now ${isChecked ? "read" : "unread"}`);
         // TODO: В будущем здесь будет мутация для обновления статуса книги
@@ -25,34 +25,54 @@ const TrainingBookList: React.FC<TrainingBookListProps> = ({ books }) => {
                 const isFinished = book.pagesFinished >= book.pagesTotal;
                 return (
                     <div key={book._id} className={css.bookRow}>
+                        {/* 1. Исправлено здесь: класс bookCell применяется всегда */}
                         <div className={css.bookCell}>
                             <input
                                 type="checkbox"
                                 className={css.checkbox}
-                                checked={isFinished}
+                                defaultChecked={isFinished}
                                 onChange={(e) =>
                                     handleCheckboxChange(
                                         book._id,
                                         e.target.checked
                                     )
                                 }
-                                // Если книга прочитана, чекбокс неактивен, чтобы случайно не снять отметку
+                                // Если книга уже отмечена как прочитанная, чекбокс неактивен
                                 disabled={isFinished}
                             />
                             <FaBook className={css.bookIcon} />
+                            {/* 2. Условный класс применяется к span, а не ко всей ячейке */}
                             <span
-                                className={isFinished ? css.finishedTitle : ""}
+                                className={clsx(
+                                    isFinished && css.finishedTitle
+                                )}
                             >
                                 {book.title}
                             </span>
                         </div>
-                        <div className={isFinished ? css.finishedText : ""}>
+                        {/* 3. И здесь: clsx объединяет классы, а не заменяет их */}
+                        <div
+                            className={clsx(
+                                css.bookCell,
+                                isFinished && css.finishedText
+                            )}
+                        >
                             {book.author}
                         </div>
-                        <div className={isFinished ? css.finishedText : ""}>
+                        <div
+                            className={clsx(
+                                css.bookCell,
+                                isFinished && css.finishedText
+                            )}
+                        >
                             {book.publishYear}
                         </div>
-                        <div className={isFinished ? css.finishedText : ""}>
+                        <div
+                            className={clsx(
+                                css.bookCell,
+                                isFinished && css.finishedText
+                            )}
+                        >
                             {book.pagesTotal}
                         </div>
                     </div>
