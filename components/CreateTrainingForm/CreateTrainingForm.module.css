@@ -1,6 +1,6 @@
 .container {
     background-color: #fff;
-    padding: 20px 0;
+    padding: 24px 0;
 }
 
 .title {
@@ -10,13 +10,13 @@
     margin-bottom: 20px;
     color: #fff;
     background-color: #b1b5c2;
-    padding: 10px;
+    padding: 16px;
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 }
 
 .datePickers {
@@ -37,26 +37,24 @@
     background-color: #f6f7fb;
     padding: 12px;
     font-family: inherit;
+    font-size: 14px;
     width: 100%;
     box-sizing: border-box;
-    color: transparent; /* Скрываем стандартный текст даты */
 }
-
-/* Когда дата выбрана, показываем ее */
-.dateInput:valid {
-    color: #242a37;
-}
-
-.datePlaceholder {
-    position: absolute;
-    left: 12px;
+.dateInput::placeholder {
     color: #a6abb9;
-    pointer-events: none; /* Чтобы клики проходили на инпут */
 }
-
-/* Когда дата выбрана, скрываем наш плейсхолдер */
-.dateInput:valid + .datePlaceholder {
-    display: none;
+.dateInput:disabled {
+    background-color: #e0e5eb;
+    cursor: not-allowed;
+}
+.dateInput::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
 }
 
 .dateIcon {
@@ -66,46 +64,31 @@
     pointer-events: none;
 }
 
-/* Скрываем стандартную иконку календаря */
-.dateInput::-webkit-calendar-picker-indicator {
-    background: none;
-    cursor: pointer;
-    width: 24px; /* Область клика */
-    height: 100%;
-    position: absolute;
-    right: 0;
-}
-
 .bookSelector {
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
     gap: 20px;
 }
 
-.selectWrapper {
-    position: relative;
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-.selectWrapper::after {
-    content: "▼";
-    position: absolute;
-    right: 15px;
-    color: #a6abb9;
-    pointer-events: none;
-}
-
-.select {
-    width: 100%;
+.bookSelectorTrigger {
+    flex-grow: 1;
     border: 1px solid #a6abb9;
     background-color: #f6f7fb;
     padding: 12px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #a6abb9;
+    height: 47px;
+    box-sizing: border-box;
+}
+
+.arrow {
+    transition: transform 0.2s ease-in-out;
+}
+.arrowUp {
+    transform: rotate(180deg);
 }
 
 .addButton {
@@ -114,33 +97,75 @@
     color: #242a37;
     border: 1px solid #242a37;
     cursor: pointer;
-    align-self: center;
-    width: 170px;
+    white-space: nowrap;
+    height: 47px;
+}
+.addButton:hover:not(:disabled) {
+    background-color: #ff6b08;
+    color: white;
+    border-color: #ff6b08;
+}
+.addButton:disabled {
+    background-color: #e0e5eb;
+    border-color: #a6abb9;
+    cursor: not-allowed;
 }
 
 .bookList {
-    margin-top: 8px;
+    width: 100%;
     font-size: 14px;
+    color: #898f9f;
+    border: 1px solid #e0e5eb;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.trainingList {
+    margin-top: 8px;
+    border: none;
+    box-shadow: none;
+    max-height: none;
+    overflow-y: visible;
+}
+
+.noBooks {
+    padding: 20px;
+    text-align: center;
     color: #898f9f;
 }
 
 .bookHeader,
 .bookRow {
     display: grid;
-    grid-template-columns: 3fr 2fr 1fr 1fr 0.5fr;
+    grid-template-columns: 3fr 2fr 1fr 1fr auto;
     gap: 8px;
     align-items: center;
-    padding: 8px 0;
+    padding: 8px 12px;
 }
 
 .bookHeader {
-    border-top: 1px solid #e0e5eb;
-    border-bottom: 1px solid #e0e5eb;
     font-weight: 500;
+    color: #898f9f;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e5eb;
+}
+.trainingList .bookRow:first-child {
+    border-top: 1px solid #e0e5eb;
 }
 
+.bookRow {
+    color: #242a37;
+    cursor: pointer;
+}
 .bookRow:not(:last-child) {
     border-bottom: 1px solid #e0e5eb;
+}
+.bookRow:hover {
+    background-color: #f6f7fb;
+}
+.selectedRow {
+    background-color: #f6f7fb;
 }
 
 .bookCell {
@@ -148,18 +173,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
-.titleCell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
 .bookIcon {
     color: #a6abb9;
-    flex-shrink: 0;
+    margin-right: 8px;
+    vertical-align: middle;
 }
-
 .deleteButton {
     background: none;
     border: none;
@@ -167,6 +185,7 @@
     color: #ff6b08;
     display: flex;
     padding: 5px;
+    font-size: 16px;
 }
 
 .submitButton {
@@ -181,7 +200,6 @@
     width: 200px;
     margin-top: 20px;
 }
-
 .submitButton:disabled {
     background-color: #a6abb9;
     cursor: not-allowed;
@@ -197,15 +215,6 @@
     .datePickers {
         flex-direction: row;
     }
-    .bookSelector {
-        flex-direction: row;
-        align-items: flex-start;
-    }
-    .addButton {
-        margin-top: 0;
-        align-self: flex-start;
-        height: 47px;
-    }
 }
 
 @media screen and (max-width: 767px) {
@@ -219,6 +228,6 @@
     }
     .bookHeader,
     .bookRow {
-        grid-template-columns: 4fr 1fr 0.5fr;
+        grid-template-columns: 4fr 1fr auto;
     }
 }

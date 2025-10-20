@@ -3,22 +3,21 @@ import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { FaCalendarAlt } from "react-icons/fa"; // Иконка для календаря
+import { FaCalendarAlt, FaBook } from "react-icons/fa";
+import { FiTrash2 } from "react-icons/fi";
+import clsx from "clsx";
+
 import type { Book } from "../../types/book";
 import type { AddPlanningRequest } from "../../types/training";
 import { startPlanning } from "../../services/trainingService";
-import TrainingBookListItem from "./TrainingBookListItem";
+import { deleteBook } from "../../services/bookService"; // Импортируем функцию глобального удаления
 import css from "./CreateTrainingForm.module.css";
 
 interface CreateTrainingFormProps {
-    books: Book[]; // Книги из списка "Маю намір прочитати"
+    books: Book[]; // Все книги из "Маю намір прочитати"
 }
 
-// Получаем сегодняшнюю дату в формате YYYY-MM-DD для атрибута min
-const getTodayString = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-};
+const getTodayString = () => new Date().toISOString().split("T")[0];
 
 const TrainingSchema = Yup.object().shape({
     startDate: Yup.date().required("Обов'язкове поле"),
@@ -28,179 +27,322 @@ const TrainingSchema = Yup.object().shape({
             Yup.ref("startDate"),
             "Дата завершення не може бути раніше дати початку"
         ),
-    books: Yup.array()
-        .of(Yup.string())
-        .min(1, "Додайте хоча б одну книгу до тренування")
-        .required("Обов'язково виберіть книги"),
+    books: Yup.array().min(1, "Додайте хоча б одну книгу до тренування"),
 });
 
 const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
-    books: availableBooks,
+    books: allAvailableBooks,
 }) => {
     const queryClient = useQueryClient();
 
-    const [trainingBooks, setTrainingBooks] = useState<Book[]>([]);
-    const [selectedBookId, setSelectedBookId] = useState<string>("");
+    // Состояния компонента
+    const [trainingBooks, setTrainingBooks] = useState<Book[]>([]); // Книги в текущей тренировке
+    const [isBookSelectorOpen, setIsBookSelectorOpen] = useState(false); // Видимость выпадающей таблицы
+    const [selectedBookId, setSelectedBookId] = useState<string | null>(null); // ID книги, выбранной в таблице для добавления
 
-    const mutation = useMutation({
+    // Мутация для старта тренировки
+    const startPlanningMutation = useMutation({
         mutationFn: (newPlanning: AddPlanningRequest) =>
             startPlanning(newPlanning),
         onSuccess: () => {
             toast.success("Тренування успішно створено!");
             queryClient.invalidateQueries({ queryKey: ["activeTraining"] });
         },
-        onError: (error) => {
-            toast.error(`Помилка: ${error.message}`);
+        onError: (error: any) => {
+            toast.error(
+                error.response?.data?.message || `Помилка: ${error.message}`
+            );
         },
     });
 
-    // Хелпер-компонент для синхронизации локального состояния с Formik
-    const SyncBooksWithFormik = () => {
-        const { setFieldValue } = useFormikContext();
-        useEffect(() => {
-            const bookIds = trainingBooks.map((b) => b._id);
-            setFieldValue("books", bookIds);
-        }, [trainingBooks, setFieldValue]);
-        return null;
-    };
+    // Мутация для ГЛОБАЛЬНОГО удаления книги из библиотеки
+    const deleteBookMutation = useMutation({
+        mutationFn: (bookId: string) => deleteBook(bookId),
+        onSuccess: (deletedBook) => {
+            toast.success(`Книга "${deletedBook.title}" видалена з бібліотеки`);
+            // Обновляем общий список книг, что автоматически обновит и наш компонент
+            queryClient.invalidateQueries({ queryKey: ["userBooks"] });
+        },
+        onError: (error: any) => {
+            toast.error(
+                error.response?.data?.message ||
+                    `Помилка видалення: ${error.message}`
+            );
+        },
+    });
+
+    // Книги, доступные для выбора (еще не в списке тренировки)
+    const availableBooksForSelection = allAvailableBooks.filter(
+        (ab) => !trainingBooks.some((tb) => tb._id === ab._id)
+    );
 
     const handleAddBook = () => {
         if (!selectedBookId) return;
-
-        const bookToAdd = availableBooks.find((b) => b._id === selectedBookId);
-        const isAlreadyAdded = trainingBooks.some(
+        const bookToAdd = availableBooksForSelection.find(
             (b) => b._id === selectedBookId
         );
-
-        if (bookToAdd && !isAlreadyAdded) {
+        if (bookToAdd) {
             setTrainingBooks((prev) => [...prev, bookToAdd]);
+            setSelectedBookId(null); // Сбрасываем выбор
         }
-        setSelectedBookId("");
     };
 
-    const handleRemoveBook = (bookId: string) => {
+    const handleRemoveBookFromTraining = (bookId: string) => {
         setTrainingBooks((prev) => prev.filter((b) => b._id !== bookId));
     };
 
-    const filteredAvailableBooks = availableBooks.filter(
-        (ab) => !trainingBooks.some((tb) => tb._id === ab._id)
-    );
+    const handleDeleteBookGlobally = (e: React.MouseEvent, bookId: string) => {
+        e.stopPropagation(); // Предотвращаем выбор строки при клике на иконку удаления
+        deleteBookMutation.mutate(bookId);
+    };
 
     return (
         <div className={css.container}>
             <h2 className={css.title}>Моє тренування</h2>
             <Formik
-                initialValues={{ startDate: "", endDate: "", books: [] }}
+                initialValues={{
+                    startDate: "",
+                    endDate: "",
+                    books: [] as string[],
+                }}
                 validationSchema={TrainingSchema}
                 onSubmit={async (values) => {
-                    await mutation.mutateAsync(values as AddPlanningRequest);
+                    await startPlanningMutation.mutateAsync(
+                        values as AddPlanningRequest
+                    );
                 }}
             >
-                {({ isSubmitting, values }) => (
-                    <Form className={css.form}>
-                        <SyncBooksWithFormik />
-                        <div className={css.datePickers}>
-                            <div className={css.dateInputWrapper}>
-                                <Field
-                                    type="date"
-                                    name="startDate"
-                                    min={getTodayString()}
-                                    className={css.dateInput}
-                                />
-                                <span className={css.datePlaceholder}>
-                                    Початок
-                                </span>
-                                <FaCalendarAlt className={css.dateIcon} />
-                            </div>
-                            <div className={css.dateInputWrapper}>
-                                <Field
-                                    type="date"
-                                    name="endDate"
-                                    min={values.startDate || getTodayString()}
-                                    className={css.dateInput}
-                                />
-                                <span className={css.datePlaceholder}>
-                                    Завершення
-                                </span>
-                                <FaCalendarAlt className={css.dateIcon} />
-                            </div>
-                        </div>
-                        <ErrorMessage
-                            name="startDate"
-                            component="div"
-                            className={css.error}
-                        />
-                        <ErrorMessage
-                            name="endDate"
-                            component="div"
-                            className={css.error}
-                        />
+                {({ isSubmitting, values, setFieldValue }) => {
+                    useEffect(() => {
+                        const bookIds = trainingBooks.map((b) => b._id);
+                        setFieldValue("books", bookIds);
+                    }, [trainingBooks, setFieldValue]);
 
-                        <div className={css.bookSelector}>
-                            <div className={css.selectWrapper}>
-                                <select
-                                    value={selectedBookId}
-                                    onChange={(e) =>
-                                        setSelectedBookId(e.target.value)
-                                    }
-                                    className={css.select}
-                                >
-                                    <option value="" disabled>
-                                        Обрати книги з бібліотеки
-                                    </option>
-                                    {filteredAvailableBooks.map((book) => (
-                                        <option key={book._id} value={book._id}>
-                                            {book.title}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={handleAddBook}
-                                className={css.addButton}
-                            >
-                                Додати
-                            </button>
-                        </div>
-                        <ErrorMessage
-                            name="books"
-                            component="div"
-                            className={css.error}
-                        />
-
-                        {trainingBooks.length > 0 && (
-                            <div className={css.bookList}>
-                                <div className={css.bookHeader}>
-                                    <div className={css.bookCell}>
-                                        Назва книги
-                                    </div>
-                                    <div className={css.bookCell}>Автор</div>
-                                    <div className={css.bookCell}>Рік</div>
-                                    <div className={css.bookCell}>Стор.</div>
-                                    <div className={css.bookCell}></div>
-                                </div>
-                                {trainingBooks.map((book) => (
-                                    <TrainingBookListItem
-                                        key={book._id}
-                                        book={book}
-                                        onRemove={handleRemoveBook}
+                    return (
+                        <Form className={css.form}>
+                            <div className={css.datePickers}>
+                                {/* Поля для выбора дат */}
+                                <div className={css.dateInputWrapper}>
+                                    <Field
+                                        name="startDate"
+                                        type="text"
+                                        onFocus={(
+                                            e: React.FocusEvent<HTMLInputElement>
+                                        ) => (e.target.type = "date")}
+                                        onBlur={(
+                                            e: React.FocusEvent<HTMLInputElement>
+                                        ) => {
+                                            if (!e.target.value)
+                                                e.target.type = "text";
+                                        }}
+                                        placeholder="Початок"
+                                        min={getTodayString()}
+                                        className={css.dateInput}
                                     />
-                                ))}
+                                    <FaCalendarAlt className={css.dateIcon} />
+                                </div>
+                                <div className={css.dateInputWrapper}>
+                                    <Field
+                                        name="endDate"
+                                        type="text"
+                                        onFocus={(
+                                            e: React.FocusEvent<HTMLInputElement>
+                                        ) => (e.target.type = "date")}
+                                        onBlur={(
+                                            e: React.FocusEvent<HTMLInputElement>
+                                        ) => {
+                                            if (!e.target.value)
+                                                e.target.type = "text";
+                                        }}
+                                        placeholder="Завершення"
+                                        min={
+                                            values.startDate || getTodayString()
+                                        }
+                                        className={css.dateInput}
+                                        disabled={!values.startDate}
+                                    />
+                                    <FaCalendarAlt className={css.dateIcon} />
+                                </div>
                             </div>
-                        )}
+                            <ErrorMessage
+                                name="endDate"
+                                component="div"
+                                className={css.error}
+                            />
 
-                        <button
-                            type="submit"
-                            disabled={
-                                isSubmitting || trainingBooks.length === 0
-                            }
-                            className={css.submitButton}
-                        >
-                            Почати тренування
-                        </button>
-                    </Form>
-                )}
+                            <div className={css.bookSelector}>
+                                <div
+                                    className={css.bookSelectorTrigger}
+                                    onClick={() =>
+                                        setIsBookSelectorOpen(
+                                            !isBookSelectorOpen
+                                        )
+                                    }
+                                >
+                                    <span>Обрати книги з бібліотеки</span>
+                                    <span
+                                        className={clsx(
+                                            css.arrow,
+                                            isBookSelectorOpen && css.arrowUp
+                                        )}
+                                    >
+                                        ▼
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleAddBook}
+                                    className={css.addButton}
+                                    disabled={!selectedBookId}
+                                >
+                                    Додати
+                                </button>
+                            </div>
+
+                            {isBookSelectorOpen && (
+                                <div className={css.bookList}>
+                                    <div className={css.bookHeader}>
+                                        <div className={css.bookCell}>
+                                            Назва книги
+                                        </div>
+                                        <div className={css.bookCell}>
+                                            Автор
+                                        </div>
+                                        <div className={css.bookCell}>Рік</div>
+                                        <div className={css.bookCell}>
+                                            Стор.
+                                        </div>
+                                        <div className={css.bookCell}></div>
+                                    </div>
+                                    {availableBooksForSelection.length > 0 ? (
+                                        availableBooksForSelection.map(
+                                            (book) => (
+                                                <div
+                                                    key={book._id}
+                                                    className={clsx(
+                                                        css.bookRow,
+                                                        selectedBookId ===
+                                                            book._id &&
+                                                            css.selectedRow
+                                                    )}
+                                                    onClick={() =>
+                                                        setSelectedBookId(
+                                                            book._id
+                                                        )
+                                                    }
+                                                    tabIndex={0}
+                                                    onKeyPress={(e) =>
+                                                        e.key === "Enter" &&
+                                                        setSelectedBookId(
+                                                            book._id
+                                                        )
+                                                    }
+                                                >
+                                                    <div
+                                                        className={css.bookCell}
+                                                    >
+                                                        <FaBook
+                                                            className={
+                                                                css.bookIcon
+                                                            }
+                                                        />{" "}
+                                                        {book.title}
+                                                    </div>
+                                                    <div
+                                                        className={css.bookCell}
+                                                    >
+                                                        {book.author}
+                                                    </div>
+                                                    <div
+                                                        className={css.bookCell}
+                                                    >
+                                                        {book.publishYear}
+                                                    </div>
+                                                    <div
+                                                        className={css.bookCell}
+                                                    >
+                                                        {book.pagesTotal}
+                                                    </div>
+                                                    <div
+                                                        className={css.bookCell}
+                                                    >
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) =>
+                                                                handleDeleteBookGlobally(
+                                                                    e,
+                                                                    book._id
+                                                                )
+                                                            }
+                                                            className={
+                                                                css.deleteButton
+                                                            }
+                                                        >
+                                                            <FiTrash2 />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )
+                                        )
+                                    ) : (
+                                        <p className={css.noBooks}>
+                                            Всі книги з вашого списку вже додано
+                                            до тренування
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                            <ErrorMessage
+                                name="books"
+                                component="div"
+                                className={css.error}
+                            />
+
+                            {/* Список уже добавленных книг */}
+                            {trainingBooks.length > 0 && (
+                                <div
+                                    className={clsx(
+                                        css.bookList,
+                                        css.trainingList
+                                    )}
+                                >
+                                    {trainingBooks.map((book) => (
+                                        <div
+                                            key={book._id}
+                                            className={css.bookRow}
+                                        >
+                                            <div className={css.bookCell}>
+                                                <FaBook
+                                                    className={css.bookIcon}
+                                                />{" "}
+                                                {book.title}
+                                            </div>
+                                            <div className={css.bookCell}>
+                                                {book.author}
+                                            </div>
+                                            <div className={css.bookCell}>
+                                                {book.publishYear}
+                                            </div>
+                                            <div className={css.bookCell}>
+                                                {book.pagesTotal}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <button
+                                type="submit"
+                                disabled={
+                                    isSubmitting || trainingBooks.length === 0
+                                }
+                                className={css.submitButton}
+                            >
+                                Почати тренування
+                            </button>
+                        </Form>
+                    );
+                }}
             </Formik>
         </div>
     );
