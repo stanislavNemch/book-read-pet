@@ -48,3 +48,26 @@
 .deleteButton:hover {
     color: #ff6b08;
 }
+
+.reviewButton {
+    background-color: #6d7a8d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 12px;
+}
+
+.reviewButton:hover {
+    background-color: #ff6b08;
+}
+
+.ratingWrapper {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}

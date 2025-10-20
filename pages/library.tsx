@@ -4,16 +4,26 @@ import toast from "react-hot-toast";
 import Header from "../components/Header/Header";
 import appCss from "../styles/container.module.css";
 import css from "./styles/LibraryPage.module.css";
-import { addBook, getUserBooks, deleteBook } from "../services/bookService";
-import type { AddBookRequest } from "../types/book";
+import {
+    addBook,
+    getUserBooks,
+    deleteBook,
+    addBookReview,
+} from "../services/bookService";
+import type { AddBookRequest, Book, BookReviewRequest } from "../types/book";
 import AddBookForm from "../components/AddBookForm/AddBookForm";
 import Instructions from "../components/Instructions/Instructions";
 import Modal from "../components/Modal/Modal";
 import MyBooks from "../components/MyBooks/MyBooks";
+import BookReviewForm from "../components/BookReviewForm/BookReviewForm"; // Импортируем новую форму
 
 const LibraryPage = () => {
     const queryClient = useQueryClient();
     const [isInstructionsModalOpen, setInstructionsModalOpen] = useState(false);
+
+    // --- Состояние для модального окна отзыва ---
+    const [isReviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedBook, setSelectedBook] = useState<Book | null>(null);
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["userBooks"],
@@ -34,6 +44,17 @@ const LibraryPage = () => {
             setInstructionsModalOpen(true);
         }
     }, [data, isLoading]);
+
+    // --- Обработчики для модального окна отзыва ---
+    const handleOpenReviewModal = (book: Book) => {
+        setSelectedBook(book);
+        setReviewModalOpen(true);
+    };
+
+    const handleCloseReviewModal = () => {
+        setReviewModalOpen(false);
+        setSelectedBook(null);
+    };
 
     const deleteMutation = useMutation({
         mutationFn: (bookId: string) => deleteBook(bookId),
@@ -69,6 +90,33 @@ const LibraryPage = () => {
 
     const handleAddBook = async (values: AddBookRequest) => {
         await mutation.mutateAsync(values);
+    };
+
+    // --- Мутация для добавления/обновления отзыва ---
+    const reviewMutation = useMutation({
+        mutationFn: ({
+            bookId,
+            reviewData,
+        }: {
+            bookId: string;
+            reviewData: BookReviewRequest;
+        }) => addBookReview(bookId, reviewData),
+        onSuccess: () => {
+            toast.success("Відгук збережено!");
+            queryClient.invalidateQueries({ queryKey: ["userBooks"] });
+            handleCloseReviewModal();
+        },
+        onError: (error) => {
+            toast.error(`Помилка: ${error.message}`);
+        },
+    });
+
+    const handleAddReview = async (values: BookReviewRequest) => {
+        if (!selectedBook) return;
+        await reviewMutation.mutateAsync({
+            bookId: selectedBook._id,
+            reviewData: values,
+        });
     };
 
     if (isLoading)
@@ -108,6 +156,9 @@ const LibraryPage = () => {
                                     <MyBooks
                                         data={data}
                                         onDeleteBook={handleDeleteBook}
+                                        onOpenReviewModal={
+                                            handleOpenReviewModal
+                                        } // Передаем обработчик
                                     />
                                 )
                             )}
@@ -129,6 +180,20 @@ const LibraryPage = () => {
             >
                 <Instructions />
             </Modal>
+
+            {/* Наше новое модальное окно для отзывов */}
+            {selectedBook && (
+                <Modal
+                    isOpen={isReviewModalOpen}
+                    onClose={handleCloseReviewModal}
+                >
+                    <BookReviewForm
+                        book={selectedBook}
+                        onSubmit={handleAddReview}
+                        onClose={handleCloseReviewModal}
+                    />
+                </Modal>
+            )}
         </>
     );
 };

@@ -1,0 +1,80 @@
+.formWrapper {
+    padding: 10px;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #898f9f;
+}
+
+.fieldGroup {
+    margin-bottom: 20px;
+}
+
+.fieldGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.starContainer {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.radioInput {
+    display: none;
+}
+
+.star {
+    cursor: pointer;
+}
+
+.textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #a6abb9;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.error {
+    color: #d32f2f;
+    font-size: 12px;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.backButton,
+.saveButton {
+    padding: 12px 30px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.backButton {
+    background-color: #fff;
+    border: 1px solid #242a37;
+    color: #242a37;
+}
+
+.saveButton {
+    background-color: #ff6b08;
+    border: 1px solid #ff6b08;
+    color: #fff;
+}
