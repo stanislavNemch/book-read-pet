@@ -9,8 +9,9 @@ interface GoalsProps {
 const calculateDaysBetween = (start: string, end: string): number => {
     const startDate = new Date(start);
     const endDate = new Date(end);
+    // Добавляем +1, так как тренировка включает и начальный, и конечный день
     const diffTime = endDate.getTime() - startDate.getTime();
-    return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24))) + 1;
 };
 
 const Goals: React.FC<GoalsProps> = ({ planning }) => {
@@ -24,7 +25,7 @@ const Goals: React.FC<GoalsProps> = ({ planning }) => {
         setDaysToEndOfYear(calculateDaysBetween(todayStr, endOfYearStr));
     }, []);
 
-    // --- ИСПРАВЛЕНО ЗДЕСЬ ---
+    // ИСПРАВЛЕНО: используем planning.endDate
     const daysUntilGoalEnd = calculateDaysBetween(
         new Date().toISOString().split("T")[0],
         planning.endDate
@@ -43,7 +44,7 @@ const Goals: React.FC<GoalsProps> = ({ planning }) => {
                     <p className={css.goalLabel}>Кількість книжок</p>
                 </div>
                 <div className={css.goalBox}>
-                    <div className={css.goalValue}>{daysUntilGoalEnd}</div>
+                    <div className={css.goalValue}>{planning.duration}</div>
                     <p className={css.goalLabel}>Кількість днів</p>
                 </div>
                 {booksRead > 0 && (

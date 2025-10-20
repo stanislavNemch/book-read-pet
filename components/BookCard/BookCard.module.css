@@ -1,37 +1,58 @@
-.card {
-    display: flex;
+.bookRow {
+    display: grid;
+    /* Колонки: Название, Автор, Год, Стр, Рейтинг/Пусто, Резюме/Пусто, Удалить */
+    grid-template-columns: 4fr 3fr 1fr 1fr auto auto;
+    gap: 8px;
     align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
+    padding: 16px;
     background-color: #ffffff;
     box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
-    gap: 16px;
-}
-
-.card:not(:last-child) {
     margin-bottom: 8px;
-}
-
-.info {
-    flex-grow: 1;
-}
-
-.title {
     font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 8px;
 }
 
-.meta {
+.bookCell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     display: flex;
-    gap: 8px;
-    font-size: 12px;
+    align-items: center;
+}
+
+.bookIcon {
+    color: #a6abb9;
+    margin-right: 12px;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.orangeIcon {
+    color: #ff6b08;
+}
+
+.finishedText {
     color: #898f9f;
 }
 
-.label {
-    width: 40px; /* Для выравнивания */
-    flex-shrink: 0;
+.ratingWrapper {
+    display: flex;
+    gap: 4px;
+}
+
+.reviewButton {
+    padding: 10px 24px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #242a37;
+    color: #242a37;
+    transition: all 250ms ease-in-out;
+}
+.reviewButton:hover {
+    background-color: #ff6b08;
+    color: #fff;
+    border-color: #ff6b08;
 }
 
 .deleteButton {
@@ -39,35 +60,44 @@
     border: none;
     color: #898f9f;
     cursor: pointer;
-    padding: 4px;
+    padding: 5px;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    margin-left: auto; /* Прижимаем кнопку вправо */
 }
 
 .deleteButton:hover {
     color: #ff6b08;
 }
 
-.reviewButton {
-    background-color: #6d7a8d;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 12px;
+@media screen and (max-width: 767px) {
+    .bookRow {
+        grid-template-columns: 1fr auto; /* Название и кнопка удаления */
+        padding: 12px;
+    }
+
+    .bookCell:nth-child(2), /* Скрываем Автора */
+    .bookCell:nth-child(3), /* Скрываем Год */
+    .bookCell:nth-child(4) {
+        /* Скрываем Стр. */
+        display: none;
+    }
+
+    /* Для прочитанных книг показываем кнопку резюме вместо удаления */
+    .hiddenOnMobile {
+        display: none;
+    }
+
+    .reviewButton {
+        grid-column: 2 / 3; /* Кнопка "Резюме" занимает место кнопки удаления */
+        padding: 8px 16px;
+    }
+
+    .ratingWrapper {
+        display: none; /* Скрываем рейтинг на мобильных */
+    }
 }
 
-.reviewButton:hover {
-    background-color: #ff6b08;
-}
-
-.ratingWrapper {
-    display: flex;
-    gap: 4px;
-    align-items: center;
+.deleteButton:disabled {
+    color: #e0e5eb; /* Бледный цвет для неактивной иконки */
+    cursor: not-allowed;
 }

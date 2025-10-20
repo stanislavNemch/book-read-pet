@@ -13,9 +13,8 @@ import { startPlanning } from "../../services/trainingService";
 import { deleteBook } from "../../services/bookService";
 import css from "./CreateTrainingForm.module.css";
 
-// ... (остальной код компонента без изменений) ...
 interface CreateTrainingFormProps {
-    books: Book[]; // Все книги из "Маю намір прочитати"
+    books: Book[];
 }
 
 const getTodayString = () => new Date().toISOString().split("T")[0];
@@ -45,10 +44,7 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
             startPlanning(newPlanning),
         onSuccess: () => {
             toast.success("Тренування успішно створено!");
-            // Обновляем данные о тренировке
             queryClient.invalidateQueries({ queryKey: ["activeTraining"] });
-            // --- ВОТ ИСПРАВЛЕНИЕ ---
-            // Обновляем общий список книг, чтобы они переместились в "Читаю"
             queryClient.invalidateQueries({ queryKey: ["userBooks"] });
         },
         onError: (error: any) => {
@@ -300,6 +296,7 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                                 className={css.error}
                             />
 
+                            {/* ИСПРАВЛЕНО: Теперь этот блок не показывается, если книг нет */}
                             {trainingBooks.length > 0 && (
                                 <div
                                     className={clsx(
@@ -318,6 +315,7 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                                         <div className={css.bookCell}>
                                             Стор.
                                         </div>
+                                        <div className={css.bookCell}></div>
                                     </div>
                                     {trainingBooks.map((book) => (
                                         <div
@@ -338,6 +336,19 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                                             </div>
                                             <div className={css.bookCell}>
                                                 {book.pagesTotal}
+                                            </div>
+                                            <div className={css.bookCell}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleRemoveBookFromTraining(
+                                                            book._id
+                                                        )
+                                                    }
+                                                    className={css.deleteButton}
+                                                >
+                                                    <FiTrash2 />
+                                                </button>
                                             </div>
                                         </div>
                                     ))}
