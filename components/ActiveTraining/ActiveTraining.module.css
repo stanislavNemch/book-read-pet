@@ -175,3 +175,50 @@
         grid-template-columns: 1fr auto;
     }
 }
+
+/* --- Стили для Statistics.tsx --- */
+.statsContainer {
+    background-color: #fff;
+    box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
+    padding: 20px;
+}
+
+.statsTitle {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.statsTable {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.statsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.statsDate {
+    font-size: 14px;
+    color: #242a37;
+}
+
+.statsPages {
+    font-size: 14px;
+    color: #242a37;
+}
+
+.statsLabel {
+    color: #898f9f;
+}
+
+.noStats {
+    text-align: center;
+    color: #898f9f;
+    padding: 20px 0;
+}
