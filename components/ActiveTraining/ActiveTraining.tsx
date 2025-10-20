@@ -1,6 +1,7 @@
 import type { Planning } from "../../types/training";
 import css from "./ActiveTraining.module.css";
 import Goals from "./Goals";
+import TrainingBookList from "./TrainingBookList";
 
 interface ActiveTrainingProps {
     planning: Planning;
@@ -16,7 +17,7 @@ const ActiveTraining: React.FC<ActiveTrainingProps> = ({ planning }) => {
 
                 {/* TODO: Здесь будут другие компоненты */}
                 <div className={css.placeholder}>
-                    <p>Тут будет список книг тренировки</p>
+                    <TrainingBookList books={planning.books} />
                 </div>
                 <div className={css.placeholder}>
                     <p>Тут будет график результатов</p>

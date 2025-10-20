@@ -100,3 +100,78 @@
         width: 300px; /* Ширина боковой колонки */
     }
 }
+
+/* --- Стили для списка книг (TrainingBookList) --- */
+
+.bookListContainer {
+    background-color: #fff;
+    box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
+}
+
+.bookHeader,
+.bookRow {
+    display: grid;
+    grid-template-columns: 4fr 3fr 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    font-size: 14px;
+}
+
+.bookHeader {
+    color: #898f9f;
+    font-weight: 500;
+}
+
+.bookRow {
+    color: #242a37;
+    border-top: 1px solid #e0e5eb;
+}
+
+.bookCell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox {
+    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+.checkbox:disabled {
+    cursor: default;
+}
+
+.bookIcon {
+    color: #ff6b08; /* Оранжевая иконка для активных книг */
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.finishedTitle {
+    text-decoration: line-through;
+}
+
+.finishedText {
+    color: #898f9f;
+    text-decoration: line-through;
+}
+
+@media screen and (max-width: 767px) {
+    .bookHeader .bookCell:nth-child(2),
+    .bookHeader .bookCell:nth-child(3) {
+        display: none;
+    }
+    .bookRow > .bookCell:nth-child(2),
+    .bookRow > .bookCell:nth-child(3) {
+        display: none;
+    }
+    .bookHeader,
+    .bookRow {
+        grid-template-columns: 1fr auto;
+    }
+}
