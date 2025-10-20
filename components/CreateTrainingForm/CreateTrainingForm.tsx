@@ -96,6 +96,14 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
         deleteBookMutation.mutate(bookId);
     };
 
+    const toggleBookSelector = () => {
+        // Если мы собираемся закрыть список (т.е. он сейчас открыт)
+        if (isBookSelectorOpen) {
+            setSelectedBookId(null); // Сбрасываем выбранную книгу
+        }
+        setIsBookSelectorOpen((prev) => !prev); // Переключаем видимость
+    };
+
     return (
         <div className={css.container}>
             <h2 className={css.title}>Моє тренування</h2>
@@ -173,11 +181,7 @@ const CreateTrainingForm: React.FC<CreateTrainingFormProps> = ({
                             <div className={css.bookSelector}>
                                 <div
                                     className={css.bookSelectorTrigger}
-                                    onClick={() =>
-                                        setIsBookSelectorOpen(
-                                            !isBookSelectorOpen
-                                        )
-                                    }
+                                    onClick={toggleBookSelector} // Используем новую функцию
                                 >
                                     <span>Обрати книги з бібліотеки</span>
                                     <span
