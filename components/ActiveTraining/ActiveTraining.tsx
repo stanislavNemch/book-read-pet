@@ -2,6 +2,7 @@ import type { Planning } from "../../types/training";
 import Goals from "./Goals";
 import TrainingBookList from "./TrainingBookList";
 import Statistics from "./Statistics";
+import AddResultForm from "./AddResultForm";
 import css from "./ActiveTraining.module.css";
 
 interface ActiveTrainingProps {
@@ -15,6 +16,8 @@ const ActiveTraining: React.FC<ActiveTrainingProps> = ({ planning }) => {
                 <Goals planning={planning} />
 
                 <TrainingBookList books={planning.books} />
+
+                <AddResultForm />
 
                 <div className={css.placeholder}>
                     <p>Тут будет график результатов</p>

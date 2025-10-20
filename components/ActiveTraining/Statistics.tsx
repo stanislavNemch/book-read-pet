@@ -14,12 +14,11 @@ const formatDate = (dateString: string) => {
             year: "numeric",
         });
     } catch (e) {
-        return dateString; // Возвращаем как есть, если формат некорректный
+        return dateString;
     }
 };
 
 const Statistics: React.FC<StatisticsProps> = ({ stats }) => {
-    // Сортируем статистику от новой к старой
     const sortedStats = [...stats].sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
