@@ -4,6 +4,7 @@ import { getUserBooks } from "../services/bookService";
 import Header from "../components/Header/Header";
 import appCss from "../styles/container.module.css";
 import CreateTrainingForm from "../components/CreateTrainingForm/CreateTrainingForm";
+import ActiveTraining from "../components/ActiveTraining/ActiveTraining"; // Импортируем новый компонент
 
 const TrainingPage = () => {
     // Запрос на получение активной тренировки
@@ -37,11 +38,7 @@ const TrainingPage = () => {
             <Header />
             <main className={appCss.container}>
                 {planning ? (
-                    <div>
-                        <h1>Активна Тренировка</h1>
-                        {/* Здесь будут компоненты для активной тренировки */}
-                        <pre>{JSON.stringify(planning, null, 2)}</pre>
-                    </div>
+                    <ActiveTraining planning={planning} />
                 ) : (
                     <CreateTrainingForm books={booksForTraining} />
                 )}

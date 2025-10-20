@@ -6,6 +6,7 @@ export interface AuthContextType {
     isLoggedIn: boolean;
     user: UserData | null;
     token: string | null;
+    isLoading: boolean; // <-- Новое свойство
     login: (data: LoginResponse) => void;
     logout: () => void;
 }

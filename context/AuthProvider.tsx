@@ -10,14 +10,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<UserData | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true); // 1. Добавляем состояние загрузки
 
     useEffect(() => {
-        const auth = authStorage.getAuth();
-        if (auth) {
-            authService.setToken(auth.accessToken);
-            setIsLoggedIn(true);
-            setUser(auth.user);
-            setToken(auth.accessToken);
+        try {
+            const auth = authStorage.getAuth();
+            if (auth) {
+                authService.setToken(auth.accessToken);
+                setIsLoggedIn(true);
+                setUser(auth.user);
+                setToken(auth.accessToken);
+            }
+        } catch (error) {
+            console.error("Failed to initialize auth state", error);
+        } finally {
+            setIsLoading(false); // 2. В любом случае (нашли токен или нет) завершаем загрузку
         }
     }, []);
 
@@ -37,12 +44,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setToken(null);
     };
 
+    // 3. Пока идет проверка, не рендерим остальное приложение
+    if (isLoading) {
+        return (
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100vh",
+                    fontSize: "20px",
+                }}
+            >
+                Перевірка авторизації...
+            </div>
+        );
+    }
+
     return (
         <AuthContext.Provider
             value={{
                 isLoggedIn,
                 user,
                 token,
+                isLoading,
                 login: handleLogin,
                 logout: handleLogout,
             }}
