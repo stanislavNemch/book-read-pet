@@ -7,20 +7,33 @@ import CreateTrainingForm from "../components/CreateTrainingForm/CreateTrainingF
 import ActiveTraining from "../components/ActiveTraining/ActiveTraining";
 import Loader from "../components/Loader/Loader";
 
+// 1. Импортируем наши тестовые данные из отдельного файла
+import { mockPlanningData } from "../utils/mockData";
+
+// 2. Создаем флаг для легкого переключения между режимами
+const USE_MOCK_DATA = true; // Поставьте 'false', чтобы работать с реальным API
+
 const TrainingPage = () => {
-    // Запрос на получение активной тренировки
-    const { data: planning, isLoading: isPlanningLoading } = useQuery({
+    // --- Логика получения данных ---
+    const { data: realPlanning, isLoading: isPlanningLoading } = useQuery({
         queryKey: ["activeTraining"],
         queryFn: getPlanning,
+        enabled: !USE_MOCK_DATA, // Запрос будет выполняться только если USE_MOCK_DATA = false
     });
 
-    // Запрос на получение всех книг, чтобы отфильтровать те, что можно добавить в тренировку
     const { data: userBooks, isLoading: areBooksLoading } = useQuery({
         queryKey: ["userBooks"],
         queryFn: getUserBooks,
+        enabled: !USE_MOCK_DATA,
     });
 
-    const isLoading = isPlanningLoading || areBooksLoading;
+    // --- Выбираем, какие данные использовать ---
+    const planning = USE_MOCK_DATA ? mockPlanningData : realPlanning;
+    const isLoading = USE_MOCK_DATA
+        ? false
+        : isPlanningLoading || areBooksLoading;
+
+    // --- Конец логики ---
 
     if (isLoading) {
         return (
@@ -31,7 +44,6 @@ const TrainingPage = () => {
         );
     }
 
-    // Книги, которые можно добавить в тренировку (из списка "собираюсь прочитать")
     const booksForTraining = userBooks?.goingToRead || [];
 
     return (

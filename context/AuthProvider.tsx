@@ -3,7 +3,11 @@ import { authService } from "../services/authService";
 import type { UserData, LoginResponse } from "../types/auth";
 import { AuthContext } from "./AuthContext";
 import { authStorage } from "../utils/authStorage";
-import Loader from "../components/Loader/Loader"; // 1. Импортируем наш лоадер
+import Loader from "../components/Loader/Loader";
+import { useRouter } from "next/router";
+
+// 2. Список защищенных страниц (как в middleware.ts)
+const privateRoutes = ["/library", "/training", "/statistics"];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -12,6 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const [user, setUser] = useState<UserData | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const router = useRouter(); // 3. Получаем доступ к роутеру
 
     useEffect(() => {
         try {
@@ -29,6 +34,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
     }, []);
 
+    useEffect(() => {
+        // Если проверка авторизации еще не завершена, ничего не делаем
+        if (isLoading) {
+            return;
+        }
+
+        const isPrivateRoute = privateRoutes.includes(router.pathname);
+        // Если пользователь не авторизован и пытается зайти на защищенную страницу
+        if (!isLoggedIn && isPrivateRoute) {
+            router.push("/login");
+        }
+    }, [isLoggedIn, isLoading, router]);
+
     const handleLogin = (loginData: LoginResponse) => {
         authStorage.saveAuth(loginData);
         authService.setToken(loginData.accessToken);
@@ -45,7 +63,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setToken(null);
     };
 
-    // 2. Заменяем div на компонент Loader
     if (isLoading) {
         return <Loader type="full-page" />;
     }
