@@ -1,26 +1,29 @@
 import type { StatPoint } from "../../types/training";
-import css from "./ActiveTraining.module.css"; // Используем общие стили
+import css from "./ActiveTraining.module.css";
 
 interface StatisticsProps {
     stats: StatPoint[];
 }
 
-// Вспомогательная функция для форматирования даты
-const formatDate = (dateString: string) => {
+// Функція тепер бере тільки дату (частину до пробілу) з рядка "YYYY-MM-DD HH:mm"
+const formatDate = (dateTimeString: string) => {
     try {
-        return new Date(dateString).toLocaleDateString("uk-UA", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
+        const datePart = dateTimeString.split(" ")[0];
+        const parts = datePart.split("-");
+        if (parts.length === 3) {
+            const [year, month, day] = parts;
+            return `${day}.${month}.${year}`;
+        }
+        return dateTimeString;
     } catch (e) {
-        return dateString;
+        return dateTimeString;
     }
 };
 
 const Statistics: React.FC<StatisticsProps> = ({ stats }) => {
+    // Сортуємо від нової дати до старої
     const sortedStats = [...stats].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
     );
 
     return (
@@ -28,10 +31,14 @@ const Statistics: React.FC<StatisticsProps> = ({ stats }) => {
             <h3 className={css.statsTitle}>Статистика</h3>
             {sortedStats.length > 0 ? (
                 <div className={css.statsTable}>
-                    {sortedStats.map((stat) => (
-                        <div key={stat.date} className={css.statsRow}>
+                    {sortedStats.map((stat, index) => (
+                        // Використовуємо комбінацію часу та індексу для унікального ключа
+                        <div
+                            key={`${stat.time}-${index}`}
+                            className={css.statsRow}
+                        >
                             <div className={css.statsDate}>
-                                {formatDate(stat.date)}
+                                {formatDate(stat.time)}
                             </div>
                             <div className={css.statsPages}>
                                 {stat.pagesCount}{" "}

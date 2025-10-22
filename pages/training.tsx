@@ -11,10 +11,9 @@ import Loader from "../components/Loader/Loader";
 import { mockPlanningData } from "../utils/mockData";
 
 // 2. Создаем флаг для легкого переключения между режимами
-const USE_MOCK_DATA = true; // Поставьте 'false', чтобы работать с реальным API
+const USE_MOCK_DATA = false; // Поставьте 'false', чтобы работать с реальным API
 
 const TrainingPage = () => {
-    // --- Логика получения данных ---
     const { data: realPlanning, isLoading: isPlanningLoading } = useQuery({
         queryKey: ["activeTraining"],
         queryFn: getPlanning,
@@ -32,8 +31,6 @@ const TrainingPage = () => {
     const isLoading = USE_MOCK_DATA
         ? false
         : isPlanningLoading || areBooksLoading;
-
-    // --- Конец логики ---
 
     if (isLoading) {
         return (

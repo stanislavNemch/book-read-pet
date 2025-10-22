@@ -46,9 +46,9 @@ const MyBooks: React.FC<MyBooksProps> = ({
 
     return (
         <div className={css.container}>
+            {renderSection("Прочитано", data.finishedReading, "finished")}
             {renderSection("Читаю", data.currentlyReading, "reading")}
             {renderSection("Маю намір прочитати", data.goingToRead, "going")}
-            {renderSection("Прочитано", data.finishedReading, "finished")}
         </div>
     );
 };

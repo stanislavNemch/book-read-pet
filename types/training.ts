@@ -9,7 +9,7 @@ export interface AddPlanningRequest {
 
 // Точка статистики для графика
 export interface StatPoint {
-    date: string;
+    time: string;
     pagesCount: number;
 }
 
