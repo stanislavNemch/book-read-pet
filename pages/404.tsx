@@ -21,7 +21,7 @@ const Custom404 = () => {
             router.replace("/library");
         } else {
             // Если пользователь не авторизован (гость), отправляем на страницу регистрации
-            router.replace("/register");
+            router.replace("/login");
         }
     }, [isLoading, isLoggedIn, router]); // Этот эффект сработает, как только изменится статус
 
