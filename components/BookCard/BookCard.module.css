@@ -9,13 +9,18 @@
     font-size: 14px;
 }
 
-/* Сітка для "Читаю" та "Маю намір прочитати" */
-.bookRowDefault {
+/* Сітка для "Читаю" */
+.bookRow.reading {
+    grid-template-columns: 1fr 220px 100px 100px;
+}
+
+/* Сітка для "Маю намір прочитати" */
+.bookRow.going {
     grid-template-columns: 1fr 220px 100px 100px 50px;
 }
 
 /* Сітка для "Прочитано" */
-.bookRowFinished {
+.bookRow.finished {
     grid-template-columns: 1fr 220px 100px 100px 140px 140px;
 }
 
@@ -46,30 +51,26 @@
     justify-self: center;
 }
 
+/* ... решта стилів без змін ... */
 .bookIcon {
     color: #a6abb9;
     margin-right: 12px;
     flex-shrink: 0;
     font-size: 20px;
 }
-
 .orangeIcon {
     color: #ff6b08;
 }
-
 .finishedText {
     color: #898f9f;
 }
-
 .ratingWrapper {
     display: flex;
     gap: 4px;
 }
-
 .ratingPlaceholder {
     height: 16px;
 }
-
 .reviewButton {
     padding: 10px 24px;
     font-weight: 500;
@@ -86,7 +87,6 @@
     color: #fff;
     border-color: #ff6b08;
 }
-
 .deleteButton {
     background: none;
     border: none;
@@ -100,10 +100,8 @@
 }
 
 @media screen and (max-width: 767px) {
-    .bookRow,
-    .bookRowDefault,
-    .bookRowFinished {
-        grid-template-columns: 1fr auto;
+    .bookRow {
+        grid-template-columns: 1fr auto !important; /* !important, щоб перезаписати специфічні класи */
     }
 
     .cellAuthor,

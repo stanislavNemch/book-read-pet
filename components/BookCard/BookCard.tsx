@@ -25,16 +25,9 @@ const BookCard: React.FC<BookCardProps> = ({
         return <div className={css.ratingWrapper}>{stars}</div>;
     };
 
-    const isFinished = status === "finished";
-
     return (
-        <div
-            className={clsx(
-                css.bookRow,
-                isFinished ? css.bookRowFinished : css.bookRowDefault
-            )}
-        >
-            {/* --- Основні дані книги --- */}
+        <div className={clsx(css.bookRow, css[status])}>
+            {/* --- Основні дані книги (завжди присутні) --- */}
             <div className={css.cellTitle}>
                 <FaBook
                     className={clsx(
@@ -42,14 +35,14 @@ const BookCard: React.FC<BookCardProps> = ({
                         status === "reading" && css.orangeIcon
                     )}
                 />
-                <span className={isFinished ? css.finishedText : ""}>
+                <span className={status === "finished" ? css.finishedText : ""}>
                     {book.title}
                 </span>
             </div>
             <div
                 className={clsx(
                     css.cellAuthor,
-                    isFinished ? css.finishedText : ""
+                    status === "finished" && css.finishedText
                 )}
             >
                 {book.author}
@@ -57,7 +50,7 @@ const BookCard: React.FC<BookCardProps> = ({
             <div
                 className={clsx(
                     css.cellYear,
-                    isFinished ? css.finishedText : ""
+                    status === "finished" && css.finishedText
                 )}
             >
                 {book.publishYear}
@@ -65,14 +58,14 @@ const BookCard: React.FC<BookCardProps> = ({
             <div
                 className={clsx(
                     css.cellPages,
-                    isFinished ? css.finishedText : ""
+                    status === "finished" && css.finishedText
                 )}
             >
                 {book.pagesTotal}
             </div>
 
-            {/* --- Блок для прочитаних книг --- */}
-            {isFinished ? (
+            {/* --- Додаткові комірки залежно від статусу --- */}
+            {status === "finished" && (
                 <>
                     <div className={css.cellRating}>{renderRating()}</div>
                     <div className={css.cellReview}>
@@ -84,18 +77,17 @@ const BookCard: React.FC<BookCardProps> = ({
                         </button>
                     </div>
                 </>
-            ) : (
-                // Порожня комірка для іконки видалення в "Читаю" та "Маю намір..."
+            )}
+
+            {status === "going" && (
                 <div className={css.cellDelete}>
-                    {status === "going" && (
-                        <button
-                            className={css.deleteButton}
-                            onClick={() => onDelete(book._id)}
-                            aria-label="Delete book"
-                        >
-                            <FiTrash2 size={18} />
-                        </button>
-                    )}
+                    <button
+                        className={css.deleteButton}
+                        onClick={() => onDelete(book._id)}
+                        aria-label="Delete book"
+                    >
+                        <FiTrash2 size={18} />
+                    </button>
                 </div>
             )}
         </div>

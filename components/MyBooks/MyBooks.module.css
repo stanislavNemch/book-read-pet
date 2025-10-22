@@ -24,13 +24,18 @@
     color: #898f9f;
 }
 
-/* Сітка для "Читаю" та "Маю намір прочитати" */
-.bookHeaderDefault {
+/* Сітка для "Читаю" */
+.bookHeader.reading {
+    grid-template-columns: 1fr 220px 100px 100px;
+}
+
+/* Сітка для "Маю намір прочитати" */
+.bookHeader.going {
     grid-template-columns: 1fr 220px 100px 100px 50px;
 }
 
 /* Сітка для "Прочитано" */
-.bookHeaderFinished {
+.bookHeader.finished {
     grid-template-columns: 1fr 220px 100px 100px 140px 140px;
 }
 

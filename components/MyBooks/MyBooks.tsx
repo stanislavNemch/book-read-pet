@@ -21,30 +21,19 @@ const MyBooks: React.FC<MyBooksProps> = ({
     ) => {
         if (books.length === 0) return null;
 
-        const isFinishedSection = status === "finished";
-
         return (
             <section className={css.section}>
                 <h3 className={css.sectionTitle}>{title}</h3>
                 <div className={css.bookList}>
-                    {/* Застосовуємо різний клас для заголовка залежно від секції */}
-                    <div
-                        className={clsx(
-                            css.bookHeader,
-                            isFinishedSection
-                                ? css.bookHeaderFinished
-                                : css.bookHeaderDefault
-                        )}
-                    >
+                    <div className={clsx(css.bookHeader, css[status])}>
                         <div className={css.headerCell}>Назва книги</div>
                         <div className={css.headerCell}>Автор</div>
                         <div className={css.headerCell}>Рік</div>
                         <div className={css.headerCell}>Стор.</div>
-                        {isFinishedSection && (
+                        {status === "finished" && (
                             <>
                                 <div className={css.headerCell}>Рейтинг</div>
-                                <div className={css.headerCell}></div>{" "}
-                                {/* Пустий для кнопки Резюме */}
+                                <div className={css.headerCell}></div>
                             </>
                         )}
                     </div>
