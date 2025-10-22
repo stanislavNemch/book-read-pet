@@ -50,7 +50,7 @@ const TrainingChart: React.FC<TrainingChartProps> = ({ planning }) => {
 
         // Ищем фактические данные за этот день
         const statForDay = planning.stats.find(
-            (stat) => stat.time === dateString
+            (stat) => stat.time.split(" ")[0] === dateString
         );
         factData.push(statForDay ? statForDay.pagesCount : null);
     }
