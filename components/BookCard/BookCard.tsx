@@ -17,19 +17,20 @@ const BookCard: React.FC<BookCardProps> = ({
     onDelete,
     onOpenReviewModal,
 }) => {
-    const isFinished = status === "finished";
-
     const renderRating = () => {
-        if (!book.rating) return <span>-</span>;
+        if (!book.rating) return <div className={css.ratingPlaceholder}></div>;
         const stars = Array.from({ length: 5 }, (_, i) => (
             <FaStar key={i} color={i < book.rating! ? "#FF6B08" : "#A6ABB9"} />
         ));
         return <div className={css.ratingWrapper}>{stars}</div>;
     };
 
+    const isFinished = status === "finished";
+
     return (
         <div className={css.bookRow}>
-            <div className={css.bookCell}>
+            {/* --- Основні дані книги --- */}
+            <div className={css.cellTitle}>
                 <FaBook
                     className={clsx(
                         css.bookIcon,
@@ -40,50 +41,42 @@ const BookCard: React.FC<BookCardProps> = ({
                     {book.title}
                 </span>
             </div>
-            <div className={clsx(css.bookCell, isFinished && css.finishedText)}>
+            <div
+                className={clsx(css.cellAuthor, isFinished && css.finishedText)}
+            >
                 {book.author}
             </div>
-            <div className={clsx(css.bookCell, isFinished && css.finishedText)}>
+            <div className={clsx(css.cellYear, isFinished && css.finishedText)}>
                 {book.publishYear}
             </div>
-            <div className={clsx(css.bookCell, isFinished && css.finishedText)}>
+            <div
+                className={clsx(css.cellPages, isFinished && css.finishedText)}
+            >
                 {book.pagesTotal}
             </div>
 
-            {isFinished && (
-                <>
-                    <div className={css.bookCell}>{renderRating()}</div>
-                    <div className={css.bookCell}>
-                        <button
-                            className={css.reviewButton}
-                            onClick={() => onOpenReviewModal(book)}
-                        >
-                            Резюме
-                        </button>
-                    </div>
-                </>
-            )}
-
-            <div
-                className={clsx(
-                    css.bookCell,
-                    css.deleteCell,
-                    isFinished && css.hiddenOnMobile
+            {/* --- Додаткові колонки --- */}
+            <div className={css.cellRating}>{isFinished && renderRating()}</div>
+            <div className={css.cellReview}>
+                {isFinished && (
+                    <button
+                        className={css.reviewButton}
+                        onClick={() => onOpenReviewModal(book)}
+                    >
+                        Резюме
+                    </button>
                 )}
-            >
-                <button
-                    className={css.deleteButton}
-                    onClick={() => onDelete(book._id)}
-                    aria-label="Delete book"
-                    disabled={status === "reading"}
-                    title={
-                        status === "reading"
-                            ? "Неможливо видалити книгу, яка бере участь у тренуванні"
-                            : "Видалити книгу"
-                    }
-                >
-                    <FiTrash2 size={18} />
-                </button>
+            </div>
+            <div className={css.cellDelete}>
+                {status === "going" && (
+                    <button
+                        className={css.deleteButton}
+                        onClick={() => onDelete(book._id)}
+                        aria-label="Delete book"
+                    >
+                        <FiTrash2 size={18} />
+                    </button>
+                )}
             </div>
         </div>
     );

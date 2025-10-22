@@ -24,11 +24,21 @@ const MyBooks: React.FC<MyBooksProps> = ({
             <section className={css.section}>
                 <h3 className={css.sectionTitle}>{title}</h3>
                 <div className={css.bookList}>
+                    {/* Додаємо всі заголовки до кожної секції --- */}
                     <div className={css.bookHeader}>
                         <div className={css.headerCell}>Назва книги</div>
                         <div className={css.headerCell}>Автор</div>
                         <div className={css.headerCell}>Рік</div>
                         <div className={css.headerCell}>Стор.</div>
+                        {/* Додаємо заголовки для прочитаних книг, щоб зберегти сітку */}
+                        {status === "finished" && (
+                            <>
+                                <div className={css.headerCell}>
+                                    Рейтинг книги
+                                </div>
+                                <div className={css.headerCell}>Резюме</div>
+                            </>
+                        )}
                     </div>
                     {books.map((book) => (
                         <BookCard

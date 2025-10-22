@@ -1,8 +1,8 @@
 .bookRow {
     display: grid;
-    /* Колонки: Название, Автор, Год, Стр, Рейтинг/Пусто, Резюме/Пусто, Удалить */
-    grid-template-columns: 4fr 3fr 1fr 1fr auto auto;
-    gap: 8px;
+    /* Сітка повністю ідентична сітці в MyBooks.module.css */
+    grid-template-columns: minmax(200px, 1fr) 200px 80px 80px 140px 140px 50px;
+    gap: 16px;
     align-items: center;
     padding: 16px;
     background-color: #ffffff;
@@ -11,12 +11,25 @@
     font-size: 14px;
 }
 
-.bookCell {
+.cellTitle,
+.cellAuthor,
+.cellYear,
+.cellPages,
+.cellRating,
+.cellReview,
+.cellDelete {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0; /* Дозволяє тексту скорочуватися */
+}
+
+.cellTitle {
     display: flex;
     align-items: center;
+}
+.cellDelete {
+    justify-self: end;
 }
 
 .bookIcon {
@@ -39,6 +52,10 @@
     gap: 4px;
 }
 
+.ratingPlaceholder {
+    height: 16px;
+}
+
 .reviewButton {
     padding: 10px 24px;
     font-weight: 500;
@@ -48,6 +65,7 @@
     border: 1px solid #242a37;
     color: #242a37;
     transition: all 250ms ease-in-out;
+    white-space: nowrap;
 }
 .reviewButton:hover {
     background-color: #ff6b08;
@@ -62,42 +80,24 @@
     cursor: pointer;
     padding: 5px;
     display: flex;
-    margin-left: auto; /* Прижимаем кнопку вправо */
 }
-
 .deleteButton:hover {
     color: #ff6b08;
 }
 
 @media screen and (max-width: 767px) {
     .bookRow {
-        grid-template-columns: 1fr auto; /* Название и кнопка удаления */
+        grid-template-columns: 1fr auto;
         padding: 12px;
     }
-
-    .bookCell:nth-child(2), /* Скрываем Автора */
-    .bookCell:nth-child(3), /* Скрываем Год */
-    .bookCell:nth-child(4) {
-        /* Скрываем Стр. */
+    .cellAuthor,
+    .cellYear,
+    .cellPages,
+    .cellRating,
+    .cellReview {
         display: none;
     }
-
-    /* Для прочитанных книг показываем кнопку резюме вместо удаления */
-    .hiddenOnMobile {
-        display: none;
+    .cellDelete {
+        grid-column: 2;
     }
-
-    .reviewButton {
-        grid-column: 2 / 3; /* Кнопка "Резюме" занимает место кнопки удаления */
-        padding: 8px 16px;
-    }
-
-    .ratingWrapper {
-        display: none; /* Скрываем рейтинг на мобильных */
-    }
-}
-
-.deleteButton:disabled {
-    color: #e0e5eb; /* Бледный цвет для неактивной иконки */
-    cursor: not-allowed;
 }
