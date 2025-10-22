@@ -1,4 +1,5 @@
 import type { GetUserBooksResponse, Book } from "../../types/book";
+import clsx from "clsx";
 import BookCard from "../BookCard/BookCard";
 import css from "./MyBooks.module.css";
 
@@ -20,23 +21,30 @@ const MyBooks: React.FC<MyBooksProps> = ({
     ) => {
         if (books.length === 0) return null;
 
+        const isFinishedSection = status === "finished";
+
         return (
             <section className={css.section}>
                 <h3 className={css.sectionTitle}>{title}</h3>
                 <div className={css.bookList}>
-                    {/* Додаємо всі заголовки до кожної секції --- */}
-                    <div className={css.bookHeader}>
+                    {/* Застосовуємо різний клас для заголовка залежно від секції */}
+                    <div
+                        className={clsx(
+                            css.bookHeader,
+                            isFinishedSection
+                                ? css.bookHeaderFinished
+                                : css.bookHeaderDefault
+                        )}
+                    >
                         <div className={css.headerCell}>Назва книги</div>
                         <div className={css.headerCell}>Автор</div>
                         <div className={css.headerCell}>Рік</div>
                         <div className={css.headerCell}>Стор.</div>
-                        {/* Додаємо заголовки для прочитаних книг, щоб зберегти сітку */}
-                        {status === "finished" && (
+                        {isFinishedSection && (
                             <>
-                                <div className={css.headerCell}>
-                                    Рейтинг книги
-                                </div>
-                                <div className={css.headerCell}>Резюме</div>
+                                <div className={css.headerCell}>Рейтинг</div>
+                                <div className={css.headerCell}></div>{" "}
+                                {/* Пустий для кнопки Резюме */}
                             </>
                         )}
                     </div>

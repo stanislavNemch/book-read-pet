@@ -17,13 +17,21 @@
 
 .bookHeader {
     display: grid;
-    /* Назва, Автор, Рік, Стор., Рейтинг, Резюме, Видалити */
-    grid-template-columns: minmax(200px, 1fr) 200px 80px 80px 140px 140px 50px;
     gap: 16px;
     padding: 0 16px;
     margin-bottom: 8px;
     font-size: 14px;
     color: #898f9f;
+}
+
+/* Сітка для "Читаю" та "Маю намір прочитати" */
+.bookHeaderDefault {
+    grid-template-columns: 1fr 220px 100px 100px 50px;
+}
+
+/* Сітка для "Прочитано" */
+.bookHeaderFinished {
+    grid-template-columns: 1fr 220px 100px 100px 140px 140px;
 }
 
 .headerCell {

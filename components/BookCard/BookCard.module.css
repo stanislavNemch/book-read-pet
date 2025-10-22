@@ -1,7 +1,5 @@
 .bookRow {
     display: grid;
-    /* Сітка повністю ідентична сітці в MyBooks.module.css */
-    grid-template-columns: minmax(200px, 1fr) 200px 80px 80px 140px 140px 50px;
     gap: 16px;
     align-items: center;
     padding: 16px;
@@ -9,6 +7,16 @@
     box-shadow: 0 2px 3px rgba(9, 30, 63, 0.1);
     margin-bottom: 8px;
     font-size: 14px;
+}
+
+/* Сітка для "Читаю" та "Маю намір прочитати" */
+.bookRowDefault {
+    grid-template-columns: 1fr 220px 100px 100px 50px;
+}
+
+/* Сітка для "Прочитано" */
+.bookRowFinished {
+    grid-template-columns: 1fr 220px 100px 100px 140px 140px;
 }
 
 .cellTitle,
@@ -21,7 +29,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-width: 0; /* Дозволяє тексту скорочуватися */
+    min-width: 0;
 }
 
 .cellTitle {
@@ -30,6 +38,12 @@
 }
 .cellDelete {
     justify-self: end;
+}
+.cellReview {
+    justify-self: center;
+}
+.cellRating {
+    justify-self: center;
 }
 
 .bookIcon {
@@ -86,10 +100,12 @@
 }
 
 @media screen and (max-width: 767px) {
-    .bookRow {
+    .bookRow,
+    .bookRowDefault,
+    .bookRowFinished {
         grid-template-columns: 1fr auto;
-        padding: 12px;
     }
+
     .cellAuthor,
     .cellYear,
     .cellPages,
