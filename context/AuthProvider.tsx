@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { authService } from "../services/authService";
+import { api } from "../lib/api";
 import type { UserData, LoginResponse } from "../types/auth";
 import { AuthContext } from "./AuthContext";
 import { authStorage } from "../utils/authStorage";
 import Loader from "../components/Loader/Loader";
-import { useRouter } from "next/router";
 
-// 2. Список защищенных страниц (как в middleware.ts)
 const privateRoutes = ["/library", "/training", "/statistics"];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -16,32 +16,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const [user, setUser] = useState<UserData | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const router = useRouter(); // 3. Получаем доступ к роутеру
+    const router = useRouter();
 
     useEffect(() => {
-        try {
+        // Создаем асинхронную функцию внутри useEffect для проверки сессии
+        const checkAuth = async () => {
             const auth = authStorage.getAuth();
-            if (auth) {
+
+            // Если токен в cookie вообще есть
+            if (auth && auth.accessToken) {
                 authService.setToken(auth.accessToken);
-                setIsLoggedIn(true);
-                setUser(auth.user);
-                setToken(auth.accessToken);
+                try {
+                    await api.get("/user/books");
+
+                    // Если запрос прошел успешно (ошибки не было):
+                    setIsLoggedIn(true);
+                    setUser(auth.user);
+                    setToken(auth.accessToken);
+                } catch (error) {
+                    // Если запрос вернул ошибку (например, 401), значит токен "протух".
+                    // Очищаем старые данные.
+                    authStorage.clearAuth();
+                    authService.setToken(null);
+                }
             }
-        } catch (error) {
-            console.error("Failed to initialize auth state", error);
-        } finally {
             setIsLoading(false);
-        }
+        };
+
+        checkAuth();
     }, []);
 
     useEffect(() => {
-        // Если проверка авторизации еще не завершена, ничего не делаем
         if (isLoading) {
             return;
         }
-
         const isPrivateRoute = privateRoutes.includes(router.pathname);
-        // Если пользователь не авторизован и пытается зайти на защищенную страницу
         if (!isLoggedIn && isPrivateRoute) {
             router.push("/login");
         }
@@ -61,6 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoggedIn(false);
         setUser(null);
         setToken(null);
+        router.push("/login");
     };
 
     if (isLoading) {
