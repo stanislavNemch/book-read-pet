@@ -29,6 +29,7 @@ const LibraryPage = () => {
     const { data, isLoading, isError } = useQuery({
         queryKey: ["userBooks"],
         queryFn: getUserBooks,
+        refetchOnMount: false,
     });
 
     useEffect(() => {

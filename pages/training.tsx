@@ -18,6 +18,8 @@ const TrainingPage = () => {
         queryKey: ["activeTraining"],
         queryFn: getPlanning,
         enabled: !USE_MOCK_DATA, // Запрос будет выполняться только если USE_MOCK_DATA = false
+        retry: false,
+        refetchOnMount: false,
     });
 
     const { data: userBooks, isLoading: areBooksLoading } = useQuery({
