@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, type ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 import { authService } from "../services/authService";
-import { api } from "../lib/api";
+import { getUserBooks } from "../services/bookService";
 import type { UserData, LoginResponse } from "../types/auth";
 import { AuthContext } from "./AuthContext";
-import { authStorage } from "../utils/authStorage";
-import Loader from "../components/Loader/Loader";
 
-const privateRoutes = ["/library", "/training", "/statistics"];
-const publicOnlyRoutes = ["/login", "/register"];
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,75 +14,106 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
-    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
     useEffect(() => {
-        const checkAuth = async () => {
-            setIsLoading(true);
-            setInitialLoadComplete(false);
-            const auth = authStorage.getAuth();
-            if (auth && auth.accessToken) {
-                authService.setToken(auth.accessToken);
-                try {
-                    await api.get("/user/books");
-                    setIsLoggedIn(true);
-                    setUser(auth.user);
-                    setToken(auth.accessToken);
-                } catch (error) {
-                    authStorage.clearAuth();
-                    authService.setToken(null);
-                    setIsLoggedIn(false);
-                    setUser(null);
-                    setToken(null);
-                }
-            } else {
-                setIsLoggedIn(false);
-                setUser(null);
-                setToken(null);
+        const validateSession = async () => {
+            const storedAccessToken = Cookies.get("accessToken");
+            const storedRefreshToken = Cookies.get("refreshToken");
+            const storedSid = Cookies.get("sid");
+            const storedUser = Cookies.get("user");
+
+            if (!storedAccessToken || !storedUser) {
+                handleLogout(false);
+                setIsLoading(false);
+                return;
             }
-            setIsLoading(false);
-            setInitialLoadComplete(true);
+
+            try {
+                authService.setToken(storedAccessToken);
+                await getUserBooks();
+
+                setIsLoggedIn(true);
+                setUser(JSON.parse(storedUser));
+                setToken(storedAccessToken);
+            } catch (error: any) {
+                console.log("Token validation failed:", error.response?.status);
+
+                if (
+                    error.response?.status === 401 &&
+                    storedRefreshToken &&
+                    storedSid
+                ) {
+                    try {
+                        const { data } = await authService.refresh(storedSid);
+
+                        const cookieOptions = {
+                            expires: 7,
+                            path: "/",
+                            sameSite: "lax" as const,
+                        };
+                        Cookies.set(
+                            "accessToken",
+                            data.newAccessToken,
+                            cookieOptions
+                        );
+                        Cookies.set(
+                            "refreshToken",
+                            data.newRefreshToken,
+                            cookieOptions
+                        );
+                        Cookies.set("sid", data.newSid, cookieOptions);
+
+                        authService.setToken(data.newAccessToken);
+                        setIsLoggedIn(true);
+                        setUser(JSON.parse(storedUser));
+                        setToken(data.newAccessToken);
+                    } catch (refreshError) {
+                        console.log("Token refresh failed, logging out");
+                        handleLogout(false);
+                    }
+                } else {
+                    handleLogout(false);
+                }
+            } finally {
+                setIsLoading(false);
+            }
         };
-        checkAuth();
+
+        validateSession();
     }, []);
 
-    useEffect(() => {
-        if (isLoading || !initialLoadComplete) {
-            return;
-        }
-
-        const isPrivateRoute = privateRoutes.includes(router.pathname);
-        const isPublicOnlyRoute = publicOnlyRoutes.includes(router.pathname);
-
-        if (isLoggedIn && isPublicOnlyRoute) {
-            router.replace("/library");
-        }
-
-        if (!isLoggedIn && isPrivateRoute) {
-            router.replace("/login");
-        }
-    }, [isLoggedIn, isLoading, initialLoadComplete, router]);
-
     const handleLogin = (loginData: LoginResponse) => {
-        authStorage.saveAuth(loginData);
+        const cookieOptions = {
+            expires: 7,
+            path: "/",
+            sameSite: "lax" as const,
+        };
+
+        Cookies.set("accessToken", loginData.accessToken, cookieOptions);
+        Cookies.set("refreshToken", loginData.refreshToken, cookieOptions);
+        Cookies.set("sid", loginData.sid, cookieOptions);
+        Cookies.set("user", JSON.stringify(loginData.userData), cookieOptions);
+
         authService.setToken(loginData.accessToken);
         setIsLoggedIn(true);
         setUser(loginData.userData);
         setToken(loginData.accessToken);
     };
 
-    const handleLogout = () => {
-        authStorage.clearAuth();
+    const handleLogout = (shouldRedirect: boolean = false) => {
+        Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("refreshToken", { path: "/" });
+        Cookies.remove("sid", { path: "/" });
+        Cookies.remove("user", { path: "/" });
         authService.setToken(null);
         setIsLoggedIn(false);
         setUser(null);
         setToken(null);
-        router.replace("/login");
-    };
 
-    if (isLoading && !initialLoadComplete) {
-        return <Loader type="full-page" />;
-    }
+        if (shouldRedirect && typeof window !== "undefined") {
+            router.push("/login");
+        }
+    };
 
     return (
         <AuthContext.Provider
@@ -94,9 +121,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 isLoggedIn,
                 user,
                 token,
-                isLoading: isLoading && !initialLoadComplete,
                 login: handleLogin,
                 logout: handleLogout,
+                isLoading,
             }}
         >
             {children}

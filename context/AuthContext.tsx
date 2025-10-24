@@ -6,9 +6,9 @@ export interface AuthContextType {
     isLoggedIn: boolean;
     user: UserData | null;
     token: string | null;
-    isLoading: boolean; // <-- Новое свойство
-    login: (data: LoginResponse) => void;
-    logout: () => void;
+    login: (loginData: LoginResponse) => void;
+    logout: (shouldRedirect?: boolean) => void;
+    isLoading: boolean;
 }
 
 // Создаем и экспортируем сам контекст

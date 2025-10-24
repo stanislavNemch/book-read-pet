@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import clsx from "clsx";
 import css from "./Header.module.css";
 import toast from "react-hot-toast";
-import { authService } from "../../services/authService";
-import { useAuth } from "../../hooks/useAuth";
 import appCss from "../../styles/container.module.css";
 import { FiHome, FiBookOpen } from "react-icons/fi";
+import { useAuth } from "@/hooks/useAuth";
+import { authService } from "@/services/authService";
 
 export default function Header() {
     const { logout, user } = useAuth();
@@ -15,15 +15,13 @@ export default function Header() {
     const handleLogout = async () => {
         try {
             await authService.logout();
-            logout();
+            logout(true);
             toast.success("Вы успешно вышли!");
-            router.push("/login");
         } catch (error: any) {
+            logout(true);
             toast.error(
                 error.response?.data?.message || "Не удалось выйти из системы."
             );
-            logout();
-            router.push("/login");
         }
     };
 
@@ -46,19 +44,19 @@ export default function Header() {
                     </div>
                     <nav className={css.nav}>
                         <Link
-                            href="/training"
+                            href="/library"
                             className={clsx(
                                 css.navLink,
-                                isActive("/training") && css.active
+                                isActive("/library") && css.active
                             )}
                         >
                             <FiBookOpen size={22} />
                         </Link>
                         <Link
-                            href="/library"
+                            href="/training"
                             className={clsx(
                                 css.navLink,
-                                isActive("/library") && css.active
+                                isActive("/training") && css.active
                             )}
                         >
                             <FiHome size={22} />
