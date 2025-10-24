@@ -1,35 +1,28 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import Header from "../components/Header/Header";
 import appCss from "../styles/container.module.css";
 import css from "./styles/LibraryPage.module.css";
-import {
-    addBook,
-    getUserBooks,
-    deleteBook,
-    addBookReview,
-} from "../services/bookService";
-import type { AddBookRequest, Book, BookReviewRequest } from "../types/book";
+import { addBook, getUserBooks, deleteBook } from "../services/bookService";
+import type { AddBookRequest, Book } from "../types/book";
 import AddBookForm from "../components/AddBookForm/AddBookForm";
 import Instructions from "../components/Instructions/Instructions";
 import Modal from "../components/Modal/Modal";
 import MyBooks from "../components/MyBooks/MyBooks";
-import BookReviewForm from "../components/BookReviewForm/BookReviewForm";
-import Loader from "../components/Loader/Loader";
 
 const LibraryPage = () => {
     const queryClient = useQueryClient();
+    const router = useRouter();
     const [isInstructionsModalOpen, setInstructionsModalOpen] = useState(false);
-
-    // --- Состояние для модального окна отзыва ---
-    const [isReviewModalOpen, setReviewModalOpen] = useState(false);
-    const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+    const [selectedBookForReview, setSelectedBookForReview] =
+        useState<Book | null>(null);
 
     const { data, isLoading, isError } = useQuery({
         queryKey: ["userBooks"],
         queryFn: getUserBooks,
-        refetchOnMount: false,
+        retry: 1,
     });
 
     useEffect(() => {
@@ -47,30 +40,27 @@ const LibraryPage = () => {
         }
     }, [data, isLoading]);
 
-    // --- Обработчики для модального окна отзыва ---
-    const handleOpenReviewModal = (book: Book) => {
-        setSelectedBook(book);
-        setReviewModalOpen(true);
-    };
-
-    const handleCloseReviewModal = () => {
-        setReviewModalOpen(false);
-        setSelectedBook(null);
-    };
-
     const deleteMutation = useMutation({
         mutationFn: (bookId: string) => deleteBook(bookId),
         onSuccess: (deletedBook) => {
             toast.success(`Книга "${deletedBook.title}" видалена`);
             queryClient.invalidateQueries({ queryKey: ["userBooks"] });
         },
-        onError: (error) => {
+        onError: (error: any) => {
             toast.error(`Помилка видалення: ${error.message}`);
         },
     });
 
     const handleDeleteBook = (bookId: string) => {
         deleteMutation.mutate(bookId);
+    };
+
+    const handleOpenReviewModal = (book: Book) => {
+        setSelectedBookForReview(book);
+    };
+
+    const handleCloseReviewModal = () => {
+        setSelectedBookForReview(null);
     };
 
     const handleCloseInstructions = () => {
@@ -85,7 +75,7 @@ const LibraryPage = () => {
             queryClient.invalidateQueries({ queryKey: ["userBooks"] });
             handleCloseInstructions();
         },
-        onError: (error) => {
+        onError: (error: any) => {
             toast.error(`Помилка: ${error.message}`);
         },
     });
@@ -94,52 +84,31 @@ const LibraryPage = () => {
         await mutation.mutateAsync(values);
     };
 
-    // --- Мутация для добавления/обновления отзыва ---
-    const reviewMutation = useMutation({
-        mutationFn: ({
-            bookId,
-            reviewData,
-        }: {
-            bookId: string;
-            reviewData: BookReviewRequest;
-        }) => addBookReview(bookId, reviewData),
-        onSuccess: () => {
-            toast.success("Відгук збережено!");
-            queryClient.invalidateQueries({ queryKey: ["userBooks"] });
-            handleCloseReviewModal();
-        },
-        onError: (error) => {
-            toast.error(`Помилка: ${error.message}`);
-        },
-    });
-
-    const handleAddReview = async (values: BookReviewRequest) => {
-        if (!selectedBook) return;
-        await reviewMutation.mutateAsync({
-            bookId: selectedBook._id,
-            reviewData: values,
-        });
-    };
-
-    if (isLoading) {
+    if (isLoading)
         return (
-            <>
-                <Header />
-                <Loader type="content" />
-            </>
+            <div style={{ padding: "20px" }}>Завантаження бібліотеки...</div>
         );
-    }
 
-    if (isError) {
+    if (isError)
         return (
-            <>
-                <Header />
-                <div style={{ padding: "20px" }}>
-                    Помилка завантаження даних. Спробуйте оновити сторінку.
-                </div>
-            </>
+            <div style={{ padding: "20px", textAlign: "center" }}>
+                <p>Помилка завантаження даних.</p>
+                <button
+                    onClick={() => router.push("/login")}
+                    style={{
+                        marginTop: "20px",
+                        padding: "10px 20px",
+                        backgroundColor: "#ff6b08",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                    }}
+                >
+                    Перейти до входу
+                </button>
+            </div>
         );
-    }
 
     const isLibraryEmpty =
         !data ||
@@ -157,54 +126,52 @@ const LibraryPage = () => {
                             <AddBookForm onSubmit={handleAddBook} />
                         </div>
 
-                        <div className={css.mainContent}>
-                            {isLibraryEmpty ? (
-                                <div className={css.mobileFormWrapper}>
-                                    <AddBookForm onSubmit={handleAddBook} />
-                                </div>
-                            ) : (
-                                data && (
-                                    <MyBooks
-                                        data={data}
-                                        onDeleteBook={handleDeleteBook}
-                                        onOpenReviewModal={
-                                            handleOpenReviewModal
-                                        } // Передаем обработчик
-                                    />
-                                )
-                            )}
+                        <div className={css.mobileFormWrapper}>
+                            <button
+                                onClick={() => setInstructionsModalOpen(true)}
+                                className={css.addBookButton}
+                            >
+                                + Додати книгу
+                            </button>
                         </div>
                     </div>
-                    {isLibraryEmpty && (
-                        <div className={css.rightColumn}>
-                            <div className={css.instructions}>
-                                <Instructions />
-                            </div>
-                        </div>
-                    )}
+
+                    <div className={css.rightColumn}>
+                        <MyBooks
+                            data={data}
+                            onDeleteBook={handleDeleteBook}
+                            onOpenReviewModal={handleOpenReviewModal}
+                        />
+                    </div>
                 </div>
-            </main>
 
-            <Modal
-                isOpen={isInstructionsModalOpen}
-                onClose={handleCloseInstructions}
-            >
-                <Instructions />
-            </Modal>
+                {isInstructionsModalOpen && (
+                    <Modal
+                        isOpen={isInstructionsModalOpen}
+                        onClose={handleCloseInstructions}
+                    >
+                        {isLibraryEmpty ? (
+                            <Instructions />
+                        ) : (
+                            <AddBookForm onSubmit={handleAddBook} />
+                        )}
+                    </Modal>
+                )}
 
-            {/* Наше новое модальное окно для отзывов */}
-            {selectedBook && (
-                <Modal
-                    isOpen={isReviewModalOpen}
-                    onClose={handleCloseReviewModal}
-                >
-                    <BookReviewForm
-                        book={selectedBook}
-                        onSubmit={handleAddReview}
+                {selectedBookForReview && (
+                    <Modal
+                        isOpen={!!selectedBookForReview}
                         onClose={handleCloseReviewModal}
-                    />
-                </Modal>
-            )}
+                    >
+                        <div style={{ padding: "20px" }}>
+                            <h2>Додати відгук</h2>
+                            <p>Книга: {selectedBookForReview.title}</p>
+                            <p>Автор: {selectedBookForReview.author}</p>
+                            {/* TODO: Добавить компонент BookReviewForm */}
+                        </div>
+                    </Modal>
+                )}
+            </main>
         </>
     );
 };

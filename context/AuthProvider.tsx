@@ -2,7 +2,6 @@ import React, { useState, type ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { authService } from "../services/authService";
-import { getUserBooks } from "../services/bookService";
 import type { UserData, LoginResponse } from "../types/auth";
 import { AuthContext } from "./AuthContext";
 
@@ -16,70 +15,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const router = useRouter();
 
     useEffect(() => {
-        const validateSession = async () => {
+        const initializeAuth = () => {
             const storedAccessToken = Cookies.get("accessToken");
-            const storedRefreshToken = Cookies.get("refreshToken");
-            const storedSid = Cookies.get("sid");
             const storedUser = Cookies.get("user");
 
-            if (!storedAccessToken || !storedUser) {
-                handleLogout(false);
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                authService.setToken(storedAccessToken);
-                await getUserBooks();
-
-                setIsLoggedIn(true);
-                setUser(JSON.parse(storedUser));
-                setToken(storedAccessToken);
-            } catch (error: any) {
-                console.log("Token validation failed:", error.response?.status);
-
-                if (
-                    error.response?.status === 401 &&
-                    storedRefreshToken &&
-                    storedSid
-                ) {
-                    try {
-                        const { data } = await authService.refresh(storedSid);
-
-                        const cookieOptions = {
-                            expires: 7,
-                            path: "/",
-                            sameSite: "lax" as const,
-                        };
-                        Cookies.set(
-                            "accessToken",
-                            data.newAccessToken,
-                            cookieOptions
-                        );
-                        Cookies.set(
-                            "refreshToken",
-                            data.newRefreshToken,
-                            cookieOptions
-                        );
-                        Cookies.set("sid", data.newSid, cookieOptions);
-
-                        authService.setToken(data.newAccessToken);
-                        setIsLoggedIn(true);
-                        setUser(JSON.parse(storedUser));
-                        setToken(data.newAccessToken);
-                    } catch (refreshError) {
-                        console.log("Token refresh failed, logging out");
-                        handleLogout(false);
-                    }
-                } else {
+            if (storedAccessToken && storedUser) {
+                try {
+                    const parsedUser = JSON.parse(storedUser);
+                    authService.setToken(storedAccessToken);
+                    setIsLoggedIn(true);
+                    setUser(parsedUser);
+                    setToken(storedAccessToken);
+                } catch (error) {
+                    console.error("Failed to parse user data:", error);
                     handleLogout(false);
                 }
-            } finally {
-                setIsLoading(false);
+            } else {
+                handleLogout(false);
             }
+
+            setIsLoading(false);
         };
 
-        validateSession();
+        initializeAuth();
     }, []);
 
     const handleLogin = (loginData: LoginResponse) => {
