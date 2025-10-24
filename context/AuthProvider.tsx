@@ -8,6 +8,7 @@ import { authStorage } from "../utils/authStorage";
 import Loader from "../components/Loader/Loader";
 
 const privateRoutes = ["/library", "/training", "/statistics"];
+const publicOnlyRoutes = ["/login", "/register"];
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
@@ -19,30 +20,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const router = useRouter();
 
     useEffect(() => {
-        // Создаем асинхронную функцию внутри useEffect для проверки сессии
         const checkAuth = async () => {
             const auth = authStorage.getAuth();
-
-            // Если токен в cookie вообще есть
             if (auth && auth.accessToken) {
                 authService.setToken(auth.accessToken);
                 try {
                     await api.get("/user/books");
-
-                    // Если запрос прошел успешно (ошибки не было):
                     setIsLoggedIn(true);
                     setUser(auth.user);
                     setToken(auth.accessToken);
                 } catch (error) {
-                    // Если запрос вернул ошибку (например, 401), значит токен "протух".
-                    // Очищаем старые данные.
                     authStorage.clearAuth();
                     authService.setToken(null);
                 }
             }
             setIsLoading(false);
         };
-
         checkAuth();
     }, []);
 
@@ -51,6 +44,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             return;
         }
         const isPrivateRoute = privateRoutes.includes(router.pathname);
+        const isPublicOnlyRoute = publicOnlyRoutes.includes(router.pathname);
+
+        if (isLoggedIn && isPublicOnlyRoute) {
+            router.push("/library");
+        }
         if (!isLoggedIn && isPrivateRoute) {
             router.push("/login");
         }
@@ -70,7 +68,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoggedIn(false);
         setUser(null);
         setToken(null);
-        router.push("/login");
     };
 
     if (isLoading) {
