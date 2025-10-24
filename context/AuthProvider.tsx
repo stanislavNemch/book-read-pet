@@ -18,9 +18,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
+    const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
     useEffect(() => {
         const checkAuth = async () => {
+            setIsLoading(true);
+            setInitialLoadComplete(false);
             const auth = authStorage.getAuth();
             if (auth && auth.accessToken) {
                 authService.setToken(auth.accessToken);
@@ -32,27 +35,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 } catch (error) {
                     authStorage.clearAuth();
                     authService.setToken(null);
+                    setIsLoggedIn(false);
+                    setUser(null);
+                    setToken(null);
                 }
+            } else {
+                setIsLoggedIn(false);
+                setUser(null);
+                setToken(null);
             }
             setIsLoading(false);
+            setInitialLoadComplete(true);
         };
         checkAuth();
     }, []);
 
     useEffect(() => {
-        if (isLoading) {
+        if (isLoading || !initialLoadComplete) {
             return;
         }
+
         const isPrivateRoute = privateRoutes.includes(router.pathname);
         const isPublicOnlyRoute = publicOnlyRoutes.includes(router.pathname);
 
         if (isLoggedIn && isPublicOnlyRoute) {
-            router.push("/library");
+            router.replace("/library");
         }
+
         if (!isLoggedIn && isPrivateRoute) {
-            router.push("/login");
+            router.replace("/login");
         }
-    }, [isLoggedIn, isLoading, router]);
+    }, [isLoggedIn, isLoading, initialLoadComplete, router]);
 
     const handleLogin = (loginData: LoginResponse) => {
         authStorage.saveAuth(loginData);
@@ -68,9 +81,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoggedIn(false);
         setUser(null);
         setToken(null);
+        router.replace("/login");
     };
 
-    if (isLoading) {
+    if (isLoading && !initialLoadComplete) {
         return <Loader type="full-page" />;
     }
 
@@ -80,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 isLoggedIn,
                 user,
                 token,
-                isLoading,
+                isLoading: isLoading && !initialLoadComplete,
                 login: handleLogin,
                 logout: handleLogout,
             }}
