@@ -16,6 +16,29 @@ export const setAuthHeader = (token: string | null) => {
     }
 };
 
+// Инициализация токена при импорте (только на клиенте)
+if (typeof window !== "undefined") {
+    const storedAccessToken = Cookies.get("accessToken");
+    if (storedAccessToken) {
+        setAuthHeader(storedAccessToken);
+    }
+}
+
+// Request interceptor - устанавливаем токен перед каждым запросом
+api.interceptors.request.use(
+    (config) => {
+        // Если токен ещё не установлен, пробуем взять из cookies
+        if (!config.headers["Authorization"] && typeof window !== "undefined") {
+            const token = Cookies.get("accessToken");
+            if (token) {
+                config.headers["Authorization"] = `Bearer ${token}`;
+            }
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
 // Флаг для предотвращения множественных refresh запросов
 let isRefreshing = false;
 let failedQueue: any[] = [];
