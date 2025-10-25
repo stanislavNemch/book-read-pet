@@ -49,3 +49,72 @@
     left: -16px;
     color: #ff6b08;
 }
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+    color: #fff;
+    min-height: 400px;
+}
+
+/* Мобільна версія - темний текст на світлому фоні */
+.mobileContainer {
+    color: #242a37;
+    padding: 20px;
+    min-height: auto;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.mobileContainer .title {
+    color: #242a37;
+}
+
+.description {
+    font-size: 16px;
+    line-height: 1.67;
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.mobileContainer .description {
+    color: #242a37;
+    opacity: 1;
+}
+
+.benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.benefitItem {
+    font-size: 16px;
+    line-height: 1.67;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobileContainer .benefitItem {
+    color: #242a37;
+}
+
+.benefitItem:last-child {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 767px) {
+    .container {
+        padding: 20px;
+        min-height: auto;
+    }
+}

@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
-// Определяем саму анимацию
-const animations = {
-    initial: { opacity: 0, x: 100 }, // Начальное состояние: прозрачный и справа
-    animate: { opacity: 1, x: 0 }, // Конечное состояние: видимый и на своем месте
-    exit: { opacity: 0, x: -100 }, // Состояние при уходе: прозрачный и слева
+// Экспортируем для использования в других компонентах
+export const animations = {
+    initial: { opacity: 0, x: 100 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: -100 },
 };
+
+export const animationTransition = { duration: 0.3 };
 
 interface AnimatedPageProps {
     children: ReactNode;
@@ -21,7 +23,7 @@ const AnimatedPage: React.FC<AnimatedPageProps> = ({ children, className }) => {
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.3 }} // Длительность анимации
+            transition={animationTransition}
         >
             {children}
         </motion.div>
