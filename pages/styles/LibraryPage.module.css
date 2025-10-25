@@ -43,7 +43,7 @@
     .instructions {
         display: block;
     }
-    .rightColumn {
+    .downColumn {
         max-width: 600px;
     }
 }
@@ -54,11 +54,11 @@
         max-width: 1280px;
     }
 
-    .leftColumn {
+    .topColumn {
         flex: 1;
     }
 
-    .rightColumn {
+    .downColumn {
         flex-shrink: 0;
     }
 

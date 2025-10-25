@@ -121,7 +121,7 @@ const LibraryPage = () => {
             <Header />
             <main className={appCss.container}>
                 <div className={css.pageWrapper}>
-                    <div className={css.leftColumn}>
+                    <div className={css.topColumn}>
                         <div className={css.desktopFormWrapper}>
                             <AddBookForm onSubmit={handleAddBook} />
                         </div>
@@ -136,7 +136,7 @@ const LibraryPage = () => {
                         </div>
                     </div>
 
-                    <div className={css.rightColumn}>
+                    <div className={css.downColumn}>
                         <MyBooks
                             data={data}
                             onDeleteBook={handleDeleteBook}
